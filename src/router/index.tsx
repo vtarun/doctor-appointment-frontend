@@ -31,19 +31,19 @@ const router = createBrowserRouter([
         ]
       },
       {
-        element: <ProtectedRoute allowedRoles={["admin"]} />, 
+        element: <ProtectedRoute allowedRoles={["ADMIN"]} />, 
         children:[
           { path: "/admin", element: <Suspense fallback={<PageSkeleton />}><AdminDashboard /></Suspense> },          
         ]
       },
       {
-        element: <ProtectedRoute allowedRoles={["doctors"]} />, 
+        element: <ProtectedRoute allowedRoles={["DOCTOR"]} />, 
         children:[          
           { path: "/doctors", element: <Suspense fallback={<PageSkeleton />}><DoctorDashboard /></Suspense> }
         ]
       },
       {
-        element: <ProtectedRoute allowedRoles={["patients"]} />, 
+        element: <ProtectedRoute allowedRoles={["PATIENT"]} />, 
         children:[          
           { path: "/patients", element: <Suspense fallback={<PageSkeleton />}><PatientDashboard /></Suspense> }
         ]

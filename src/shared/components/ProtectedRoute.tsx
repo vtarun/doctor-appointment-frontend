@@ -1,24 +1,27 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom"
+import { useAuthStore } from "@/shared/store/authStore";
+import type { UserRoleType } from "../types";
 
 interface ProtectedRouteProps{
-  allowedRoles?: string[]
+  allowedRoles?: UserRoleType[]
 }
 
 const ProtectedRoute = ({allowedRoles = []} : ProtectedRouteProps) => {
   const { pathname } = useLocation();
-  const token = localStorage.getItem('token');
-  let storedUser = localStorage.getItem('user');
-  const user = storedUser ? JSON.parse(storedUser) : null;
+  const { isAuthenticated, user } = useAuthStore();
   
-  if(!token){
+  if(!isAuthenticated){
    return <Navigate to="/login" replace />;
   }
 
-  if(!user?.role && pathname !== '/onboarding'){
-    return <Navigate to="/onboarding" replace/>;
+  if(!user?.role){
+    if(pathname !== '/onboarding'){
+      return <Navigate to="/onboarding" replace/>;
+    }
+    return <Outlet />
   }
 
-  if(allowedRoles.length > 0 && !allowedRoles.includes(user?.role)){
+  if(allowedRoles.length > 0 && !allowedRoles.includes(user.role)){
     return <Navigate to="/unauthorized" replace />;
   }
   
