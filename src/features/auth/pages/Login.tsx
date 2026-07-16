@@ -1,4 +1,4 @@
-import { Link, replace, useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { authApi } from "../api/auth.api";
 import { useAuthStore } from "@/shared/store/authStore";
 import { useForm } from "react-hook-form";
@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const Login = () => {
   const { login } = useAuthStore();
-  const { register, formState: { errors, isSubmitting}, handleSubmit, setError } = useForm<LoginFormData>({
+  const { register, formState: { errors, isSubmitting, isValid}, handleSubmit, setError } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema)
   });
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const Login = () => {
         <label htmlFor="user-password">
           <input id="user-password" type="password" {...register('password')} />
         </label>
-        <button type="submit" disabled={isSubmitting}>Login</button>
+        <button type="submit" disabled={isSubmitting || !isValid}>Login</button>
         <p><Link to="/test">forgot password?</Link></p>      
         {errors.root && <span>{errors.root.message}</span> }
       </form>
