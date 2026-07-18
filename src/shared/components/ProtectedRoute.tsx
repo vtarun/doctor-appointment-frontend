@@ -8,22 +8,22 @@ interface ProtectedRouteProps{
 
 const ProtectedRoute = ({allowedRoles = []} : ProtectedRouteProps) => {
   const { pathname } = useLocation();
-  const { isAuthenticated, user } = useAuthStore();
+  // const { isAuthenticated, user } = useAuthStore();
   
-  if(!isAuthenticated){
-   return <Navigate to="/login" replace />;
-  }
+  // if(!isAuthenticated){
+  //  return <Navigate to="/login" replace />;
+  // }
 
-  if(!user?.role){
-    if(pathname !== '/onboarding'){
-      return <Navigate to="/onboarding" replace/>;
-    }
-    return <Outlet />
-  }
+  // if(!user?.role){
+  //   if(pathname !== '/onboarding'){
+  //     return <Navigate to="/onboarding" replace/>;
+  //   }
+  //   return <Outlet />
+  // }
 
-  if(allowedRoles.length > 0 && !allowedRoles.includes(user.role)){
-    return <Navigate to="/unauthorized" replace />;
-  }
+  // if(allowedRoles.length > 0 && !allowedRoles.includes(user.role)){
+  //   return <Navigate to="/unauthorized" replace />;
+  // }
   
   return <Outlet />
 }

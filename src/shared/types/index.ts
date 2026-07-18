@@ -3,6 +3,8 @@ export interface User{
     id: string,
     name: string,
     email: string,
+    dob: Date,
+    gender: string,
     role: UserRoleType,
     createdAt: string,
     updatedAt: string
