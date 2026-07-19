@@ -1,10 +1,8 @@
-import { useAuthStore } from "@/shared/store/authStore";
 import { useFormContext } from "react-hook-form";
 import type { OnboardingFormData } from "../schemas/onboarding.schema";
 
 const PersonalInfo = () => {
-  const { register, formState: {errors} } = useFormContext<OnboardingFormData>();
-  const { user } = useAuthStore();
+  const { register, formState: {errors} } = useFormContext<OnboardingFormData>();  
   return (
     <div>
         <h2>Personal Info</h2>

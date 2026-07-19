@@ -6,7 +6,6 @@ interface ReviewAndSubmitProps {
 }
 const ReviewAndSubmit = ({onEditSteps}: ReviewAndSubmitProps) => {
   const { control, formState: {isSubmitting} } = useFormContext<OnboardingFormData>();
-  // const allFieldsData = getValues();
   const { fullname,
     dateOfBirth,
     gender,

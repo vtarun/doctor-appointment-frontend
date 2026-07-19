@@ -6,6 +6,7 @@ import PersonalInfo from "../components/PersonalInfo";
 import PracticeDetails from "../components/PracticeDetails";
 import ReviewAndSubmit from "../components/ReviewAndSubmit";
 import Credentials from "../components/Credentials";
+import { useAuthStore } from "@/shared/store/authStore";
 
 const stepFields: Record<number, (keyof OnboardingFormInput)[]> = {
   1: ['fullname', 'dateOfBirth', 'gender'],
@@ -14,12 +15,13 @@ const stepFields: Record<number, (keyof OnboardingFormInput)[]> = {
 }
 const Onboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const { user } = useAuthStore();
   const methods = useForm<OnboardingFormInput, unknown, OnboardingFormData>({
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
-    fullname: '',
-    dateOfBirth: undefined,
-    gender: undefined,
+    fullname: user?.name,
+    dateOfBirth: String(user?.dob) ?? undefined,
+    gender: (user?.gender as OnboardingFormInput['gender']) ?? undefined,
     speciality: '',
     totalExperience: 0,
     qualification: undefined,
