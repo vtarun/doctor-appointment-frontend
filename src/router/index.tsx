@@ -8,6 +8,7 @@ import Register from "@/features/auth/pages/Register";
 import { lazy, Suspense } from "react";
 import ProtectedRoute from "@/shared/components/ProtectedRoute";
 import Unauthorized from "@/pages/Unauthorized";
+import DoctorsList from "@/features/doctor/pages/DoctorsList";
 
 const AdminDashboard = lazy(() => import('@/features/admin/pages/AdminDashboard'))
 const DoctorDashboard = lazy(() => import('@/features/doctor/pages/DoctorDashboard'))
@@ -37,13 +38,14 @@ const router = createBrowserRouter([
         ]
       },
       {
-        element: <ProtectedRoute allowedRoles={["DOCTOR"]} />, 
+        element: <ProtectedRoute allowedRoles={["PATIENT", "ADMIN"]} />, 
         children:[          
-          { path: "/doctors", element: <Suspense fallback={<PageSkeleton />}><DoctorDashboard /></Suspense> }
+          { path: "/doctors", element: <Suspense fallback={<PageSkeleton />}><DoctorDashboard /></Suspense> },
+          { path: "/doctors/:speciality", element: <Suspense fallback={<PageSkeleton />}><DoctorsList /></Suspense> },
         ]
       },
       {
-        element: <ProtectedRoute allowedRoles={["PATIENT"]} />, 
+        element: <ProtectedRoute allowedRoles={["DOCTOR"]} />, 
         children:[          
           { path: "/patients", element: <Suspense fallback={<PageSkeleton />}><PatientDashboard /></Suspense> }
         ]

@@ -43,3 +43,19 @@ export interface Transaction {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Doctor{
+  _id: string,
+    userId: {
+      _id: string,
+      name: string,
+      email: string
+    },
+    speciality : string,
+    experienceYears: number,
+    // qualification: string,   
+    verificationStatus: 'PENDING'| 'VERIFIED'| 'REJECTED',
+    credentials: string[],
+    createdAt: string,
+    updatedAt: string
+}
