@@ -2,7 +2,7 @@ import { useFormContext } from "react-hook-form";
 import type { OnboardingFormData } from "../schemas/onboarding.schema";
 
 const PracticeDetails = () => {
-  const { register, formState: {errors, isValid, isSubmitting}, setError} = useFormContext<OnboardingFormData>();
+  const { register, formState: {errors}} = useFormContext<OnboardingFormData>();
   return (
     <div>
       <h2>Practice Details</h2>
@@ -21,7 +21,7 @@ const PracticeDetails = () => {
         <option value="IN_PERSON">In_person</option>
         <option value="BOTH">Both</option>
       </select>
-      {errors.gender && <p>{errors.gender.message}</p>}
+      {errors.consultationType && <p>{errors.consultationType.message}</p>}
 
       <label htmlFor="consultationFee">Consultation Fee</label>
       <input id="consultationFee" {...register("consultationFee")} />
