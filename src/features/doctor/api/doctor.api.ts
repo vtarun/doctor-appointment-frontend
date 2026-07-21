@@ -8,6 +8,7 @@ export const doctorApi = {
     },
 
     getDoctorById: async (id: string) => {
-        return await axiosInstance.get(`/doctors/${id}`)
+        const response = await axiosInstance.get(`/doctors/${id}`);
+        return response.data;
   }
 }

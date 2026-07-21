@@ -9,6 +9,7 @@ import { lazy, Suspense } from "react";
 import ProtectedRoute from "@/shared/components/ProtectedRoute";
 import Unauthorized from "@/pages/Unauthorized";
 import DoctorsList from "@/features/doctor/pages/DoctorsList";
+import DoctorDetails from "@/features/doctor/pages/DoctorDetails";
 
 const AdminDashboard = lazy(() => import('@/features/admin/pages/AdminDashboard'))
 const DoctorDashboard = lazy(() => import('@/features/doctor/pages/DoctorDashboard'))
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
         children:[          
           { path: "/doctors", element: <Suspense fallback={<PageSkeleton />}><DoctorDashboard /></Suspense> },
           { path: "/doctors/:speciality", element: <Suspense fallback={<PageSkeleton />}><DoctorsList /></Suspense> },
+          { path: "/doctors/:speciality/:doctorId", element: <Suspense fallback={<PageSkeleton />}><DoctorDetails /></Suspense> },
         ]
       },
       {
