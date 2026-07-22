@@ -5,10 +5,12 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { availabilityApi } from "@/features/availability/api/availability.api";
 import type { Slot } from "@/features/availability/types";
 import queryClient from "@/shared/lib/queryClient";
+import { appointmentApi } from "@/features/appointments/api/appointment.api";
 
 
 const DoctorDetails = () => {
     const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+    const [bookingError, setBookingError] = useState<string | null>(null);
     const navigate = useNavigate();
     const params = useParams();
     const {data: doctor, isLoading: isLoadingDoctor, isError: isDoctorError } = useQuery({
@@ -24,18 +26,24 @@ const DoctorDetails = () => {
     });
 
     const {mutate, isPending} = useMutation({
-        mutationFn: (slot: Slot) => Promise.resolve(true), //TODO
+        mutationFn: (slot: Slot) => appointmentApi.book({
+            doctorId: doctor!._id,
+            startTime: slot.startTime,
+            endTime: slot.endTime,
+            consultationType: 'IN_PERSON'
+        }),
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['slots', params.doctorId]}),
             navigate('/appointments');
         },
         onError: (error) => {
-            
+            setBookingError(error.message);
         },
     });
 
-    const bookAppointment = () => {
-         //TODO: mutate
+    const bookAppointment = () => {  
+        if(!selectedSlot) return;   
+         mutate(selectedSlot);
     }
 
 
@@ -63,6 +71,7 @@ const DoctorDetails = () => {
                 }
             </section>
             <button type="button" disabled={!selectedSlot || isPending} onClick={bookAppointment}>{isPending ? 'Booking...' : 'Book Appointment'}</button>
+            {bookingError && <p style={{color: 'red'}}>{bookingError}</p> }
         </div>
     )
 }
