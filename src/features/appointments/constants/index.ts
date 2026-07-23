@@ -1,0 +1,1 @@
+export const buttonListAppointmentStatus = ['ALL', 'BOOKED' ,'COMPLETED' ,'CANCELLED'];

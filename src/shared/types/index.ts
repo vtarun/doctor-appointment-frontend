@@ -12,7 +12,14 @@ export interface User{
 
 export interface Appointment{
     _id: string,
-    doctorId: string,
+    doctorId: {
+      _id: string,
+      speciality: string,
+      userId: {
+        _id: string,
+        name: string
+      }
+    },
     patientId: string,
     startTime: string,
     endTime: string,
