@@ -5,7 +5,7 @@ import RootLayout from "@/layouts/RootLayout";
 import Onboarding from "@/features/auth/pages/Onboarding";
 import Login from "@/features/auth/pages/Login";
 import Register from "@/features/auth/pages/Register";
-import { lazy, Suspense } from "react";
+import React, { Children, lazy, Suspense } from "react";
 import ProtectedRoute from "@/shared/components/ProtectedRoute";
 import Unauthorized from "@/pages/Unauthorized";
 import DoctorsList from "@/features/doctor/pages/DoctorsList";
@@ -16,6 +16,10 @@ const DoctorDashboard = lazy(() => import('@/features/doctor/pages/DoctorDashboa
 const PatientDashboard = lazy(() => import('@/features/patient/pages/PatientDashboard'))
 
 const PageSkeleton = () => <div> Loading ...</div>
+
+const withSuspence = (element: React.ReactNode) => {
+  return <Suspense fallback={<PageSkeleton />}>{element}</Suspense>
+}
 
 const router = createBrowserRouter([
   { path: "/", 
@@ -29,27 +33,39 @@ const router = createBrowserRouter([
       { 
         element: <ProtectedRoute />, 
         children:[                    
-          { path: "/onboarding", element: <Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense> }          
+          { path: "/onboarding", element: withSuspence(<Onboarding />)  }          
         ]
       },
       {
         element: <ProtectedRoute allowedRoles={["ADMIN"]} />, 
-        children:[
-          { path: "/admin", element: <Suspense fallback={<PageSkeleton />}><AdminDashboard /></Suspense> },          
-        ]
+        // children:[
+        //   {
+        //     path: "admin",
+        //     element: withSuspense(<AdminDashboard />),
+        //   },
+        //   {
+        //     path: "admin/doctors",
+        //     element: withSuspense(<PendingDoctors />),
+        //   },
+        //   {
+        //     path: "admin/doctors/:doctorId",
+        //     element: withSuspense(<AdminDoctorDetails />),
+        //   }                 
+        // ]
       },
       {
         element: <ProtectedRoute allowedRoles={["PATIENT"]} />, 
-        children:[          
-          { path: "/doctors", element: <Suspense fallback={<PageSkeleton />}><DoctorDashboard /></Suspense> },
-          { path: "/doctors/:speciality", element: <Suspense fallback={<PageSkeleton />}><DoctorsList /></Suspense> },
-          { path: "/doctors/:speciality/:doctorId", element: <Suspense fallback={<PageSkeleton />}><DoctorDetails /></Suspense> },
+        children:[  
+          { path: '/patient', element: withSuspence(<PatientDashboard/>)},        
+          { path: "/doctors", element: withSuspence(<DoctorDashboard />) }, //TODO: Why should this route exist?
+          { path: "/doctors/:speciality", element: withSuspence(<DoctorsList />) },
+          { path: "/doctors/:speciality/:doctorId", element: withSuspence(<DoctorDetails />) },
         ]
       },
       {
         element: <ProtectedRoute allowedRoles={["DOCTOR"]} />, 
         children:[          
-          { path: "/patients", element: <Suspense fallback={<PageSkeleton />}><PatientDashboard /></Suspense> }
+          { path: "/doctor", element: withSuspence(<DoctorDashboard />) }
         ]
       }        
           

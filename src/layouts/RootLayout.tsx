@@ -1,10 +1,17 @@
-import { Outlet } from "react-router-dom"
+import Navbar from "@/shared/components/Nabvar";
+import { useAuthStore } from "@/shared/store/authStore";
+import { Outlet } from "react-router-dom";
 
 const RootLayout = () => {
+  const { isAuthenticated, isLoading, user} = useAuthStore();
+  const role = !isLoading && isAuthenticated ?  user?.role : null;
+  
   return (
     <div>
-      <h1>I will be navbar in future</h1>
-      <Outlet />
+      {role && <Navbar role={role}/>}
+      <main>
+        <Outlet />
+      </main>
     </div>
   )
 }
