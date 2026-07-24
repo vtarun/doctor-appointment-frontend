@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import NotFound from "@/pages/NotFound";
-import Landing from "@/pages/Landing";
+import HomeRedirect from "@/pages/HomeRedirect";
 import RootLayout from "@/layouts/RootLayout";
 import Onboarding from "@/features/auth/pages/Onboarding";
 import Login from "@/features/auth/pages/Login";
@@ -22,7 +22,7 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     errorElement: <NotFound />,
     children: [
-      { index: true, element: <Landing /> },
+      { index: true, element: <HomeRedirect /> },
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
       { path: "/unauthorized", element: <Unauthorized /> },
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
         ]
       },
       {
-        element: <ProtectedRoute allowedRoles={["PATIENT", "ADMIN"]} />, 
+        element: <ProtectedRoute allowedRoles={["PATIENT"]} />, 
         children:[          
           { path: "/doctors", element: <Suspense fallback={<PageSkeleton />}><DoctorDashboard /></Suspense> },
           { path: "/doctors/:speciality", element: <Suspense fallback={<PageSkeleton />}><DoctorsList /></Suspense> },

@@ -1,9 +1,9 @@
 import { RouterProvider } from 'react-router-dom'
 import './App.css'
-import router from './router'
+import router from '@/router'
 import { useEffect } from 'react'
-import { useAuthStore } from './shared/store/authStore';
-import { authApi } from './features/auth/api/auth.api';
+import { useAuthStore } from '@/shared/store/authStore';
+import { authApi } from '@/features/auth/api/auth.api';
 
 const PageSkeleton = () => <div> Loading ...</div>
 
