@@ -3,17 +3,29 @@ import { useAuthStore } from "@/shared/store/authStore";
 import type { UserRoleType } from "../types";
 
 interface ProtectedRouteProps{
-  allowedRoles?: UserRoleType[]
+  allowedRoles?: UserRoleType[],
+  onboardingOnly?: Boolean
 }
 
-const ProtectedRoute = ({allowedRoles = []} : ProtectedRouteProps) => {
+const ProtectedRoute = ({allowedRoles = [], onboardingOnly= false} : ProtectedRouteProps) => {
   const { pathname } = useLocation();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, isLoading } = useAuthStore();
   
+  if(isLoading){
+    return <p>Loading...</p>
+  }
+
   if(!isAuthenticated){
    return <Navigate to="/login" replace />;
   }
 
+  if(onboardingOnly){
+    if(!user?.role){
+      return <Outlet />
+    }
+    return <Navigate to="/" replace/>;
+  }
+  
   if(!user?.role){
     if(pathname !== '/onboarding'){
       return <Navigate to="/onboarding" replace/>;

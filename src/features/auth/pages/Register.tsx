@@ -6,7 +6,7 @@ import { authApi } from "../api/auth.api";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const {register, formState: {errors, isSubmitting, isValid}, handleSubmit, setError} = useForm<registrationInput, null, registrationOutput>({
+  const {register, formState: {errors, isSubmitting }, handleSubmit, setError} = useForm<registrationInput, null, registrationOutput>({
     resolver: zodResolver(registrationSchema)
   });
 
@@ -15,7 +15,7 @@ const Register = () => {
   const {mutate, isPending} = useMutation({
     mutationFn: (data: registrationOutput) => authApi.register(data),
     onSuccess:() => {
-      navigate('/onboarding');
+      navigate('/onboarding', {replace: true});
     },
     onError: (error) => {
       setError('root', {message: error.message})
@@ -29,7 +29,7 @@ const Register = () => {
   return (
     <div>
         
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} style={{display: 'flex', flexDirection: 'column'}}>
           <label htmlFor="user-name">Name: 
             <input id="user-name" type="text" {...register('name')} />
           </label>
@@ -55,15 +55,18 @@ const Register = () => {
           </label>            
           {errors.dateOfBirth && <p>{errors.dateOfBirth.message}</p>}
               
-          <label htmlFor="password">
+          <label htmlFor="password">Password
             <input id="password" type="password" {...register('password')} />
           </label>
+          {errors.password && <p role="alert">{errors.password.message}</p> }
 
-          <label htmlFor="confirm-password">
+          <label htmlFor="confirm-password"> Confirm password
             <input id="confirm-password" type="password" {...register('confirmPassword')} />
           </label>
+          
+          {errors.confirmPassword && <p role="alert">{errors.confirmPassword.message}</p> }
 
-          <button disabled={isSubmitting || !isValid || isPending}>{isPending ? 'Registering...' : 'Register'}</button>
+          <button disabled={isSubmitting || isPending}>{isPending ? 'Registering...' : 'Register'}</button>          
           {errors.root && <p style={{color: 'red'}}>{errors?.root?.message}</p>}
         </form>
         
