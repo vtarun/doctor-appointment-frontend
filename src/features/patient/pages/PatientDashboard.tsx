@@ -64,7 +64,7 @@ const PatientDashboard = () => {
       </section>
 
       <div className='cards'>
-          <WalletBalanceCard />
+          <WalletBalanceCard detailsPath="/patient/wallet" />
 
           <div className='card'>
             {/* TODO: Replace with appointment API data */}

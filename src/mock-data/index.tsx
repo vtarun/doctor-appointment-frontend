@@ -122,3 +122,150 @@ export const mockAppointments = [
     }
   }
 ];
+
+
+export const mockTransactions = [
+  {
+    _id: "txn-001",
+    userId: "patient-001",
+    type: "CANCELLATION_REFUND",
+    amount: 500,
+    balanceAfter: 2500,
+    appointmentId: "appointment-006",
+    meta: {
+      doctorName: "Dr. Vijaya Nair",
+      reason: "Appointment cancelled",
+    },
+    createdAt: "2026-08-06T10:30:00.000Z",
+    updatedAt: "2026-08-06T10:30:00.000Z",
+  },
+  {
+    _id: "txn-002",
+    userId: "patient-001",
+    type: "BOOKING_DEBIT",
+    amount: 500,
+    balanceAfter: 2000,
+    appointmentId: "appointment-006",
+    meta: {
+      doctorName: "Dr. Vijaya Nair",
+      consultationType: "VIDEO",
+    },
+    createdAt: "2026-08-04T16:30:00.000Z",
+    updatedAt: "2026-08-04T16:30:00.000Z",
+  },
+  {
+    _id: "txn-003",
+    userId: "patient-001",
+    type: "BOOKING_DEBIT",
+    amount: 500,
+    balanceAfter: 2500,
+    appointmentId: "appointment-005",
+    meta: {
+      doctorName: "Dr. Arjun Mehta",
+      consultationType: "VIDEO",
+    },
+    createdAt: "2026-08-03T11:00:00.000Z",
+    updatedAt: "2026-08-03T11:00:00.000Z",
+  },
+  {
+    _id: "txn-004",
+    userId: "patient-001",
+    type: "ALLOCATE",
+    amount: 3000,
+    balanceAfter: 3000,
+    meta: {
+      reason: "Monthly credit allocation",
+      allocationMonth: "August 2026",
+    },
+    createdAt: "2026-08-01T00:00:00.000Z",
+    updatedAt: "2026-08-01T00:00:00.000Z",
+  },
+  {
+    _id: "txn-005",
+    userId: "patient-001",
+    type: "BOOKING_DEBIT",
+    amount: 500,
+    balanceAfter: 1000,
+    appointmentId: "appointment-004",
+    meta: {
+      doctorName: "Dr. Neha Sharma",
+      consultationType: "IN_PERSON",
+    },
+    createdAt: "2026-07-28T09:30:00.000Z",
+    updatedAt: "2026-07-28T09:30:00.000Z",
+  },
+  {
+    _id: "txn-006",
+    userId: "patient-001",
+    type: "CANCELLATION_REFUND",
+    amount: 500,
+    balanceAfter: 1500,
+    appointmentId: "appointment-003",
+    meta: {
+      doctorName: "Dr. Rohan Kapoor",
+      reason: "Appointment cancelled",
+    },
+    createdAt: "2026-07-25T14:15:00.000Z",
+    updatedAt: "2026-07-25T14:15:00.000Z",
+  },
+  {
+    _id: "txn-007",
+    userId: "patient-001",
+    type: "BOOKING_DEBIT",
+    amount: 500,
+    balanceAfter: 1000,
+    appointmentId: "appointment-003",
+    meta: {
+      doctorName: "Dr. Rohan Kapoor",
+      consultationType: "VIDEO",
+    },
+    createdAt: "2026-07-22T18:00:00.000Z",
+    updatedAt: "2026-07-22T18:00:00.000Z",
+  },
+  {
+    _id: "txn-008",
+    userId: "patient-001",
+    type: "BOOKING_DEBIT",
+    amount: 500,
+    balanceAfter: 1500,
+    appointmentId: "appointment-002",
+    meta: {
+      doctorName: "Dr. Priya Menon",
+      consultationType: "VIDEO",
+    },
+    createdAt: "2026-07-18T12:30:00.000Z",
+    updatedAt: "2026-07-18T12:30:00.000Z",
+  },
+  {
+    _id: "txn-009",
+    userId: "patient-001",
+    type: "CANCELLATION_REFUND",
+    amount: 500,
+    balanceAfter: 2000,
+    appointmentId: "appointment-001",
+    meta: {
+      doctorName: "Dr. Sameer Gupta",
+      reason: "Doctor cancelled appointment",
+    },
+    createdAt: "2026-07-15T08:45:00.000Z",
+    updatedAt: "2026-07-15T08:45:00.000Z",
+  },
+  {
+    _id: "txn-010",
+    userId: "patient-001",
+    type: "BOOKING_DEBIT",
+    amount: 500,
+    balanceAfter: 1500,
+    appointmentId: "appointment-001",
+    meta: {
+      doctorName: "Dr. Sameer Gupta",
+      consultationType: "VIDEO",
+    },
+    createdAt: "2026-07-10T17:15:00.000Z",
+    updatedAt: "2026-07-10T17:15:00.000Z",
+  },
+] as const;
+
+export const mockWallet = {
+  balance: 2500,
+};

@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { creditApi } from "../api/credit.api";
 
 export const useTransactions = () => {
-    const {data: wallet , isError: isWalletError, isLoading: isWalletLoading} = useQuery({
+    const {data: transactions , isError: isError, isLoading: isLoading} = useQuery({
         queryKey: ['transactions'],
         queryFn: () => creditApi.getTransactions(),
     }); 
 
-    return {wallet, isWalletError, isWalletLoading}
+    return {transactions, isError, isLoading}
 }
