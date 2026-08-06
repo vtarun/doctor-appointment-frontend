@@ -1,26 +1,31 @@
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+
 import { appointmentApi } from "@/features/appointments/api/appointment.api";
 import AppointmentCard from "@/features/appointments/components/AppointmentCard";
+import { buttonListAppointmentStatus   } from "@/features/appointments/constants";
+
 import queryClient from "@/shared/lib/queryClient";
 import type { Appointment } from "@/shared/types";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useAuthStore } from "@/shared/store/authStore";
+import { Link } from "react-router-dom";
+import { useAppointments } from "@/features/appointments/hooks/useAppointments";
+import WalletBalanceCard from "@/features/credit/components/WalletBalanceCard";
 
-import { buttonListAppointmentStatus   } from "@/features/appointments/constants";
-import { useState } from "react";
+type StatusFilter = Appointment['status'] | 'ALL';
 
-const PatientDashboard = () => {  
-  const {data: originalAppointmentList, isError: isAppointmentsError, isLoading: isAppointmentLoading} = useQuery({
-    queryKey: ['appointments'],
-    queryFn: () => appointmentApi.getAllAppointments(),
-  });
-
-  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+const PatientDashboard = () => {    
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const [cancelError, setCancelError] = useState<string>('');
 
-  const appointmentList = statusFilter === 'ALL' ? originalAppointmentList : originalAppointmentList.filter((appointment: Appointment) => appointment.status === statusFilter);
+  const {originalAppointmentList, isAppointmentsError, isAppointmentLoading} = useAppointments();
+
+  
 
   const {mutate, isPending} = useMutation({
     mutationFn: (appointmentId: string) => appointmentApi.cancel(appointmentId),
     onSuccess: () => {
+      setCancelError('');
       queryClient.invalidateQueries({queryKey: ['appointments']});
       queryClient.invalidateQueries({queryKey: ['transactions']});
     },
@@ -29,40 +34,69 @@ const PatientDashboard = () => {
     }
   });
 
+  const { user } = useAuthStore();
+
   const cancelAppointment = (appointmentId: string) => {
+    setCancelError('');
     mutate(appointmentId);
   };
+
+  const isNoAppointments = originalAppointmentList?.length === 0;
+  
+  const filteredAppointments = statusFilter === 'ALL' ? originalAppointmentList : originalAppointmentList?.filter((appointment: Appointment) => appointment.status === statusFilter);
+
+  const isNoFilteredAppointments = filteredAppointments?.length === 0;
 
   if(isAppointmentLoading) return <p>Loading appointments...</p>
 
   if(isAppointmentsError) return <p>Error loading appointments list</p>
 
-  if(!appointmentList || appointmentList?.length === 0) return <p>No Appointments found.</p>
-
-
   return (
-    <div>      
-      <section className="appointment-section">
+    <div>   
+      <section className="section-dashboard">
+        <div>
+        <h2>Welcome back, {user?.name || "Vivek"} </h2>
+        <p>Manage your appointments and consultations.</p>
+        </div>
+        <div>
+          <button type='button'><Link to='/doctors'>Find a doctor<span></span></Link></button> 
+        </div>
+      </section>
+
+      <div className='cards'>
+          <WalletBalanceCard />
+
+          <div className='card'>
+            {/* TODO: Replace with appointment API data */}
+            <p>Next appointment</p>
+            <p><b>Today, 4:30 PM</b></p>
+            <p>Video. Dr. Vijya nair</p>
+          </div>
+        </div>
+  
+      <section className="section-appointment">
         
-        {isAppointmentsError && <p>Error loading appointments list</p>}
         
-        
-        {/* Add filter to show speciefic appointments */}
         {cancelError && <p style={{color: 'red'}}>{cancelError}</p>}
 
+        {/* Add filter to show speciefic appointments */}
         <div>
+          <h3 style={{display: 'block', marginLeft: '25px'}}>My Appointments <span>{filteredAppointments?.length ?? 0} appointments</span></h3>
           <ul style={{display: 'flex', listStyle: 'none', gap: '20px' }}>
-            {buttonListAppointmentStatus.map((status: string) => <li key={status} ><button onClick={() => setStatusFilter(status)}>{status}</button></li>)}      
+            {buttonListAppointmentStatus.map((status) => <li key={status} ><button onClick={() => setStatusFilter(status)} className={status === statusFilter ? 'active' : ''}>{status}</button></li>)}      
           </ul>
         </div>
-        {}
-        {/* List patients all appointments. Group them according to status */}
-        {appointmentList?.map((appointment: Appointment) => {
-          return (<AppointmentCard key={appointment._id} appointment={appointment} cancel={cancelAppointment}/>)
+
+        
+
+        {isNoAppointments && <p>You do not have any appointments yet.</p>}
+
+        {(!isNoAppointments && isNoFilteredAppointments) && <p>No {statusFilter} appointments found.</p>}
+        
+        {!isNoFilteredAppointments && filteredAppointments?.map((appointment: Appointment) => {
+          return (<AppointmentCard key={appointment._id} appointment={appointment} cancel={() => cancelAppointment(appointment._id)} isCancelling={isPending}/>)
         })}
       </section>
-      
-      {/* Show latest appointments from each category in the list */}
     </div>
   )
 }

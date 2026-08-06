@@ -13,6 +13,7 @@ import DoctorDetails from "@/features/doctor/pages/DoctorDetails";
 import PendingDoctors from "@/features/admin/pages/PendingDoctors";
 import AdminDoctorDetails from "@/features/admin/pages/AdminDoctorDetails";
 import FindDoctors from "@/features/patient/pages/FindDoctors";
+import PatientWallet from "@/features/patient/pages/PatientWallet";
 
 const AdminDashboard = lazy(() => import('@/features/admin/pages/AdminDashboard'))
 const DoctorDashboard = lazy(() => import('@/features/doctor/pages/DoctorDashboard'))
@@ -59,7 +60,8 @@ const router = createBrowserRouter([
       {
         element: <ProtectedRoute allowedRoles={["PATIENT"]} />, 
         children:[  
-          { path: '/patient', element: withSuspense(<PatientDashboard/>)},        
+          { path: '/patient', element: withSuspense(<PatientDashboard/>)}, 
+          { path: '/patient/wallet', element: withSuspense(<PatientWallet />)},        
           { path: "/doctors", element: withSuspense(<FindDoctors />) },
           { path: "/doctors/:speciality", element: withSuspense(<DoctorsList />) },
           { path: "/doctors/:speciality/:doctorId", element: withSuspense(<DoctorDetails />) },

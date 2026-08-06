@@ -1,1 +1,1 @@
-export const buttonListAppointmentStatus = ['ALL', 'BOOKED' ,'COMPLETED' ,'CANCELLED'];
+export const buttonListAppointmentStatus = ['ALL', 'BOOKED' ,'COMPLETED' ,'CANCELLED'] as const;

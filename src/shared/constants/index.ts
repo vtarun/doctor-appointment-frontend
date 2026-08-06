@@ -9,6 +9,7 @@ export const NavbarRoleBasedLinks: Record<UserRoleType, NavbarLink[]> = {
     PATIENT: [
         { to: "/patient", label: "Dashboard" },
         { to: "/doctors", label: "Find Doctors" },
+        { to: "/patient/wallet", label: "Wallet" },
     ],
     DOCTOR: [
         { to: "/doctor", label: "Dashboard" },
