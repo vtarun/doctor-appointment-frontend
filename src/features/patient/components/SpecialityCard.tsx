@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import type { Speciality } from "../types"
+import type { Speciality } from "../types";
 
 interface SpecialityCardProps{
   speciality: Speciality

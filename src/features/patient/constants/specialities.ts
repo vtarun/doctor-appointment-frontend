@@ -1,4 +1,4 @@
-import type { Speciality } from "../types";
+import type { Speciality } from "@/features/patient/types";
 
 export const specialties: Speciality[] = [
   { name: 'Cardiology', slug: 'cardiology', icon: '🫀' },

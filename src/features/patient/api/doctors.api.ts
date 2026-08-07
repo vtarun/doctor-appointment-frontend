@@ -1,6 +1,6 @@
 import { axiosInstance } from "@/shared/api/axiosInstance";
 
-export const doctorApi = {
+export const doctorsApi = {
     getDoctors: async (speciality?: string) => {
         const url = speciality ? `/doctors?speciality=${speciality}` : '/doctors';
         const response = await axiosInstance.get(url);

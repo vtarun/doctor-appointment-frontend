@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { useParams } from "react-router-dom";
-import { doctorApi } from "../api/doctor.api";
+import { doctorsApi } from "../api/doctors.api";
 import DoctorCard from "../components/DoctorCard";
 import type { Doctor } from "@/shared/types";
 
@@ -8,7 +8,7 @@ const DoctorsList = () => {
   const params = useParams();
   const {data: doctors, isError, isLoading, error} = useQuery({
     queryKey: ['doctors', params.speciality],
-    queryFn: () => doctorApi.getDoctors(params.speciality)
+    queryFn: () => doctorsApi.getDoctors(params.speciality)
   });
 
   if(isLoading){

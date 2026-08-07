@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { doctorApi } from "../api/doctor.api";
+import { doctorApi } from "../api/doctors.api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { availabilityApi } from "@/features/availability/api/availability.api";
 import type { Slot } from "@/features/availability/types";
