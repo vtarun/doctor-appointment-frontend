@@ -59,13 +59,14 @@ const router = createBrowserRouter([
       },
       {
         element: <ProtectedRoute allowedRoles={["PATIENT"]} />, 
-        children:[  
-          { path: '/patient', element: withSuspense(<PatientDashboard/>)}, 
-          { path: '/patient/wallet', element: withSuspense(<PatientWallet />)},        
-          { path: "/doctors", element: withSuspense(<FindDoctors />) },
-          { path: "/doctors/:speciality", element: withSuspense(<DoctorsList />) },
-          { path: "/doctors/:speciality/:doctorId", element: withSuspense(<DoctorDetails />) },
-        ]
+        children: [
+          { path: "patient", element: withSuspense(<PatientDashboard />) },
+          // { path: "patient/appointments", element: withSuspense(<PatientAppointments />) },
+          { path: "patient/wallet", element: withSuspense(<PatientWallet />) },
+          { path: "patient/doctors", element: withSuspense(<FindDoctors />) },
+          { path: "patient/doctors/:speciality", element: withSuspense(<DoctorsList />) },
+          { path: "patient/doctors/:speciality/:doctorId", element: withSuspense(<DoctorDetails />) },
+        ],
       },
       {
         element: <ProtectedRoute allowedRoles={["DOCTOR"]} />, 

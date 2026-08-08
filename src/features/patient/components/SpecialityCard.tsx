@@ -9,7 +9,7 @@ const SpecialityCard = ({speciality: {name, slug, icon}}: SpecialityCardProps) =
   return (
     <div>
       <span>{icon}</span>
-      <Link to={`/doctors/${slug}`}>{name}</Link>
+      <Link to={`${slug}`}>{name}</Link>
     </div>
   )
 }

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { doctorApi } from "../api/doctors.api";
+import { doctorsApi } from "../api/doctors.api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { availabilityApi } from "@/features/availability/api/availability.api";
 import type { Slot } from "@/features/availability/types";
 import queryClient from "@/shared/lib/queryClient";
 import { appointmentApi } from "@/features/appointments/api/appointment.api";
+import AvailabilitySlots from "../components/AvailabilitySlots";
+import { ROUTES } from "@/router/routes";
 
 
 const DoctorDetails = () => {
@@ -15,7 +17,7 @@ const DoctorDetails = () => {
     const params = useParams();
     const {data: doctor, isLoading: isLoadingDoctor, isError: isDoctorError } = useQuery({
         queryKey: ['doctor', params.doctorId],
-        queryFn: () => doctorApi.getDoctorById(params.doctorId!),
+        queryFn: () => doctorsApi.getDoctorById(params.doctorId!),
         staleTime: 30 * 60 * 1000  // 30 minutes
     });
 
@@ -33,8 +35,8 @@ const DoctorDetails = () => {
             consultationType: 'IN_PERSON'
         }),
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['slots', params.doctorId]}),
-            navigate('/appointments');
+            queryClient.invalidateQueries({queryKey: ['slots', params.doctorId]});
+            navigate(ROUTES.patient.root);
         },
         onError: (error) => {
             setBookingError(error.message);
@@ -44,6 +46,11 @@ const DoctorDetails = () => {
     const bookAppointment = () => {  
         if(!selectedSlot) return;   
          mutate(selectedSlot);
+    }
+
+    const handleSelectSlot = (slot: Slot) => {
+        setSelectedSlot(slot);
+        setBookingError(null);
     }
 
 
@@ -62,16 +69,11 @@ const DoctorDetails = () => {
                 <h3 className="speciality">{doctor?.speciality}</h3>
                 <p>Total experience: {doctor?.experienceYears}</p>
             </section>
-            <section className="slot-section">
-                {availabilityData?.slots.map((slot: Slot) =>(
-                      <div key={slot.startTime} onClick={() => setSelectedSlot(slot)} style={{backgroundColor : selectedSlot === slot ? 'blue' : 'white'}}>
-                        <p>{new Date(slot.startTime).toLocaleTimeString()} - {new Date(slot.endTime).toLocaleTimeString()}</p>
-                      </div> 
-                    ))
-                }
+            <section className="slot-section">                                  
+                <AvailabilitySlots slots={availabilityData?.slots ?? []} handleSelectSlot={handleSelectSlot} selectedSlot={selectedSlot} />                   
             </section>
             <button type="button" disabled={!selectedSlot || isPending} onClick={bookAppointment}>{isPending ? 'Booking...' : 'Book Appointment'}</button>
-            {bookingError && <p style={{color: 'red'}}>{bookingError}</p> }
+            {bookingError && <p className='error'>{bookingError}</p> }
         </div>
     )
 }

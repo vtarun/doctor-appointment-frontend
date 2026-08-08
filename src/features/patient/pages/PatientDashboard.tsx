@@ -59,12 +59,12 @@ const PatientDashboard = () => {
         <p>Manage your appointments and consultations.</p>
         </div>
         <div>
-          <button type='button'><Link to='/doctors'>Find a doctor<span></span></Link></button> 
+          <button type='button'><Link to='doctors'>Find a doctor<span></span></Link></button> 
         </div>
       </section>
 
       <div className='cards'>
-          <WalletBalanceCard detailsPath="/patient/wallet" />
+          <WalletBalanceCard detailsPath="wallet" />
 
           <div className='card'>
             {/* TODO: Replace with appointment API data */}
