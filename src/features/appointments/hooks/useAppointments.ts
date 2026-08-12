@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useAppointments = () => {
     const {data: originalAppointmentList, isError: isAppointmentsError, isLoading: isAppointmentLoading} = useQuery({
-        queryKey: ['appointments'],
+        queryKey: ['appointments/me'],
         queryFn: () => mockAppointments as Appointment[]//appointmentApi.getAllAppointments(),  //TODO:
     });
 

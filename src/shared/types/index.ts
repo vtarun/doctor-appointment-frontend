@@ -31,6 +31,8 @@ export interface Appointment{
     updatedAt: string
 }
 
+
+
 export type TransactionType =
   | "ALLOCATE"
   | "BOOKING_DEBIT"
@@ -65,4 +67,11 @@ export interface Doctor{
     credentials: string[],
     createdAt: string,
     updatedAt: string
+}
+export interface ApiErrorResponse {
+  success: false;
+  error: {
+    code: string;
+    message: string;
+  };
 }

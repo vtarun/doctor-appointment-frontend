@@ -36,6 +36,8 @@ const DoctorDetails = () => {
         }),
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['slots', params.doctorId]});
+            // queryClient.invalidateQueries({queryKey: ['appointments']});
+            // queryClient.invalidateQueries({queryKey: ['wallet']});
             navigate(ROUTES.patient.root);
         },
         onError: (error) => {
@@ -44,7 +46,8 @@ const DoctorDetails = () => {
     });
 
     const bookAppointment = () => {  
-        if(!selectedSlot) return;   
+         if (!selectedSlot || isPending) return;
+         setBookingError(null);
          mutate(selectedSlot);
     }
 
@@ -69,11 +72,12 @@ const DoctorDetails = () => {
                 <h3 className="speciality">{doctor?.speciality}</h3>
                 <p>Total experience: {doctor?.experienceYears}</p>
             </section>
-            <section className="slot-section">                                  
+            <section className="slot-section">    
+                <h2 id="availability-heading">Available appointments</h2>                              
                 <AvailabilitySlots slots={availabilityData?.slots ?? []} handleSelectSlot={handleSelectSlot} selectedSlot={selectedSlot} />                   
             </section>
             <button type="button" disabled={!selectedSlot || isPending} onClick={bookAppointment}>{isPending ? 'Booking...' : 'Book Appointment'}</button>
-            {bookingError && <p className='error'>{bookingError}</p> }
+            {bookingError && <p role='alert' className='error'>{bookingError}</p> }
         </div>
     )
 }
