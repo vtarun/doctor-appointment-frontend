@@ -1,0 +1,71 @@
+.doctor-wallet {
+  width: min(1000px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 32px 0 64px;
+  color: #243044;
+  text-align: left;
+}
+
+.wallet-back { display: inline-block; margin-bottom: 26px; color: #526071; font-size: 14px; text-decoration: none; }
+.wallet-header { margin-bottom: 25px; }
+.wallet-header h1 { margin: 4px 0 8px; color: #152238; font-size: clamp(32px, 5vw, 44px); line-height: 1.05; letter-spacing: -1.2px; }
+.wallet-header > div > p:last-child, .wallet-card-heading p { color: #667085; }
+.wallet-eyebrow { color: #246b57; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+
+.wallet-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+.balance-card, .wallet-card { box-sizing: border-box; border: 1px solid #e4e7ec; border-radius: 16px; background: #fff; box-shadow: 0 8px 22px rgba(16, 24, 40, .045); }
+.balance-card { display: grid; gap: 5px; padding: 20px; }
+.balance-card span { color: #667085; font-size: 13px; font-weight: 650; }
+.balance-card strong { color: #182230; font-size: 25px; line-height: 1.2; }
+.balance-card small { color: #8a94a3; font-size: 12px; }
+.balance-card-primary { border-color: #9fc7ba; background: #f2faf7; }
+.balance-card-primary strong { color: #185744; }
+
+.wallet-layout { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 22px; align-items: start; }
+.wallet-card { padding: 24px; }
+.wallet-card-heading { padding-bottom: 18px; border-bottom: 1px solid #eef0f3; }
+.wallet-card-heading h2 { margin: 0 0 5px; color: #182230; font-size: 20px; }
+.wallet-card-heading p { font-size: 14px; }
+
+.payout-form { display: grid; gap: 17px; padding-top: 20px; }
+.payout-form label { display: grid; gap: 7px; color: #475467; font-size: 13px; font-weight: 650; }
+.payout-form input { min-height: 44px; box-sizing: border-box; border: 1px solid #d0d5dd; border-radius: 9px; padding: 9px 12px; color: #182230; background: #fff; font: inherit; }
+.payout-form small { color: #8a94a3; font-weight: 400; }
+.payout-form button { min-height: 44px; border: 0; border-radius: 9px; color: #fff; background: #216e58; font: inherit; font-weight: 700; cursor: pointer; }
+.payout-form button:hover:not(:disabled) { background: #185744; }
+.payout-form button:disabled { cursor: not-allowed; opacity: .58; }
+
+.wallet-feedback { margin-top: 15px; border-radius: 9px; padding: 11px 13px; font-size: 14px; }
+.wallet-feedback.success { color: #185744; background: #edf8f3; }
+.wallet-feedback.error, .wallet-error { color: #a11f2b; background: #fff0f1; }
+.wallet-state { width: min(900px, calc(100% - 40px)); box-sizing: border-box; margin: 32px auto; border-radius: 10px; padding: 18px; text-align: left; background: #f7f8fa; }
+.wallet-empty { margin-top: 18px; border-radius: 10px; padding: 18px; color: #667085; background: #f7f8fa; }
+
+.active-payout { display: grid; gap: 7px; margin-top: 20px; border-radius: 12px; padding: 18px; background: #f7f8fa; }
+.active-payout strong { color: #182230; font-size: 22px; }
+.active-payout p, .active-payout small { color: #667085; }
+.status-pill { display: inline-flex; width: fit-content; border-radius: 999px; padding: 3px 8px; color: #475467; background: #eef0f3; font-size: 11px; font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
+.status-pill.processing { color: #7a5a00; background: #fff5cc; }
+.status-pill.processed { color: #185744; background: #e7f6f0; }
+.status-pill.rejected { color: #a11f2b; background: #fff0f1; }
+
+.payout-list, .transaction-list { display: grid; gap: 0; margin: 4px 0 0; padding: 0; list-style: none; }
+.payout-list li, .transaction-list li { display: flex; align-items: center; justify-content: space-between; gap: 18px; border-bottom: 1px solid #eef0f3; padding: 14px 0; }
+.payout-list li:last-child, .transaction-list li:last-child { border-bottom: 0; }
+.payout-list li > div, .transaction-list li > div { display: grid; gap: 3px; }
+.payout-list strong, .transaction-list strong { color: #182230; }
+.payout-list span, .transaction-list span { color: #7b8794; font-size: 12px; }
+.payout-list-end, .transaction-amount { justify-items: end; text-align: right; }
+.transaction-card { margin-top: 22px; }
+.transaction-amount strong.credit { color: #185744; }
+.transaction-amount strong.debit { color: #a11f2b; }
+
+@media (max-width: 800px) {
+  .wallet-summary { grid-template-columns: 1fr 1fr; }
+  .wallet-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 520px) {
+  .wallet-summary { grid-template-columns: 1fr; }
+  .payout-list li, .transaction-list li { align-items: flex-start; }
+}
