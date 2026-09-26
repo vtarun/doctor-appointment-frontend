@@ -3,9 +3,9 @@ export interface User{
     id: string,
     name: string,
     email: string,
-    dob: Date,
+    dateOfBirth: string,
     gender: string,
-    role: UserRoleType,
+    role: UserRoleType | null,
     createdAt: string,
     updatedAt: string
 }

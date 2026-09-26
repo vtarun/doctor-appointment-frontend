@@ -4,17 +4,21 @@ import { registrationSchema, type registrationInput, type registrationOutput } f
 import { useMutation } from "@tanstack/react-query";
 import { authApi } from "../api/auth.api";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/shared/store/authStore";
 
 const Register = () => {
   const {register, formState: {errors, isSubmitting }, handleSubmit, setError} = useForm<registrationInput, null, registrationOutput>({
     resolver: zodResolver(registrationSchema)
   });
 
+  const { login } = useAuthStore();
+
   const navigate = useNavigate();
 
   const {mutate, isPending} = useMutation({
     mutationFn: (data: registrationOutput) => authApi.register(data),
-    onSuccess:() => {
+    onSuccess:({user, token}) => {
+      login(user, token); 
       navigate('/onboarding', {replace: true});
     },
     onError: (error) => {

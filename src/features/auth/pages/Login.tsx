@@ -16,7 +16,7 @@ const Login = () => {
     
     try{      
       const response = await authApi.login(data);
-      await login(response.user, response.token);      
+      login(response.user, response.token);      
       const role = response.user.role;
       if(role === 'PATIENT'){
         navigate('/patient', {replace : true});
