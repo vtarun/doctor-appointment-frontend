@@ -145,7 +145,7 @@ const {
 
   const isNoAppointments = originalAppointmentList?.length === 0;
   
-  const filteredAppointments = statusFilter === 'ALL' ? originalAppointmentList : originalAppointmentList?.filter((appointment: Appointment) => appointment.status === statusFilter);
+  const filteredAppointments = statusFilter === 'ALL' ? originalAppointmentList : originalAppointmentList?.filter((appointment: DoctorAppointment) => appointment.verificationStatus === statusFilter);
 
   const isNoFilteredAppointments = filteredAppointments?.length === 0;
 
@@ -157,12 +157,24 @@ const {
     return <p role='alert'>Unable to load doctor details. Please try again.</p>
   }
 
-  if (doctor.status === "PENDING") {
+  if (doctor.verificationStatus === "PENDING") {
     return <DoctorPendingStatus />
   }
 
-  if (doctor.status === "REJECTED") {
+  if (doctor.verificationStatus === "REJECTED") {
     return <DoctorRejectedStatus reason= "" />//{doctor?.rejectionReason}/>
+  }
+
+  if (isAppointmentLoading) {
+    return <p>Loading appointments...</p>;
+  }
+
+  if (isAppointmentsError) {
+    return (
+      <p role="alert">
+        Unable to load appointments. Please try again.
+      </p>
+    );
   }
 
 
@@ -175,7 +187,7 @@ const {
         </div>
         <div>
           <h2>{doctor.userId.name}</h2>
-          <span>{doctor.status}</span>
+          <span>{doctor.verificationStatus}</span>
         </div>
         <div>
           <p>{doctor.speciality}</p>

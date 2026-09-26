@@ -14,6 +14,10 @@ import PendingDoctors from "@/features/admin/pages/PendingDoctors";
 import AdminDoctorDetails from "@/features/admin/pages/AdminDoctorDetails";
 import FindDoctors from "@/features/patient/pages/FindDoctors";
 import PatientWallet from "@/features/patient/pages/PatientWallet";
+import DoctorAvailability from "@/features/doctor/pages/DoctorAvailability";
+import DoctorWallet from "@/features/doctor/pages/DoctorWallet";
+import DoctorAppointmentDetails from "@/features/doctor/pages/DoctorAppointmentDetails";
+import DoctorProfile from "@/features/doctor/pages/DoctorProfile";
 
 const AdminDashboard = lazy(() => import('@/features/admin/pages/AdminDashboard'))
 const DoctorDashboard = lazy(() => import('@/features/doctor/pages/DoctorDashboard'))
@@ -43,18 +47,9 @@ const router = createBrowserRouter([
       {
         element: <ProtectedRoute allowedRoles={["ADMIN"]} />, 
         children:[
-          {
-            path: "admin",
-            element: withSuspense(<AdminDashboard />),
-          },
-          {
-            path: "admin/doctors",
-            element: withSuspense(<PendingDoctors />),
-          },
-          {
-            path: "admin/doctors/:doctorId",
-            element: withSuspense(<AdminDoctorDetails />),
-          }                 
+          { path: "admin", element: withSuspense(<AdminDashboard />) },
+          { path: "admin/doctors", element: withSuspense(<PendingDoctors />) },
+          { path: "admin/doctors/:doctorId", element: withSuspense(<AdminDoctorDetails />) }                 
         ]
       },
       {
@@ -71,7 +66,11 @@ const router = createBrowserRouter([
       {
         element: <ProtectedRoute allowedRoles={["DOCTOR"]} />, 
         children:[          
-          { path: "/doctor", element: withSuspense(<DoctorDashboard />) }
+          { path: "/doctor", element: withSuspense(<DoctorDashboard />) },
+          { path: "/doctor/availability", element: withSuspense(<DoctorAvailability />) },
+          { path: "/doctor/wallet", element: withSuspense(<DoctorWallet />) },
+          { path: "/doctor/appointments/:appointmentId", element: withSuspense(<DoctorAppointmentDetails />) },
+          { path: "/doctor/profile", element: withSuspense(<DoctorProfile />) }
         ]
       }        
           

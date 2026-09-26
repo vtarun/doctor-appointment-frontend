@@ -8,11 +8,11 @@ export const authApi = {
         return response.data;
     },
     login: async (data: LoginFormData) => {
-        const response = await axiosInstance.post('/login', data );
+        const response = await axiosInstance.post('/auth/login', data );
         return response.data;
     },
     register: async(data: registrationOutput) => {
-        const response = await axiosInstance.post('/register', data);
+        const response = await axiosInstance.post('/auth/register', data);
         return response.data;
     }
 }
