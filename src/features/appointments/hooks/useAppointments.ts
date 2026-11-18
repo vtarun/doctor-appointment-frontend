@@ -1,3 +1,4 @@
+import { queryKeys } from '@/shared/lib/queryKeys';
 // import { mockDoctorAppointments } from "@/features/doctor/mock-data";
 // import type { DoctorAppointment } from "@/features/doctor/types";
 // import { mockPatientAppointments } from "@/mock-data";
@@ -6,7 +7,7 @@ import { appointmentApi } from "../api/appointment.api";
 
 export const useAppointments = () => {
     const {data: originalAppointmentList, isError: isAppointmentsError, isLoading: isAppointmentLoading} = useQuery({
-        queryKey: ['appointments/me'],
+        queryKey: queryKeys.appointments,
         queryFn: () => appointmentApi.getAllAppointments(),
     });
 

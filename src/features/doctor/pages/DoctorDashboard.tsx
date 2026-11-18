@@ -11,7 +11,7 @@ import { appointmentApi } from "@/features/appointments/api/appointment.api";
 import { buttonListAppointmentStatus } from "@/features/appointments/constants";
 import CancellationModal from "@/features/appointments/components/CancellationModal";
 
-import queryClient from "@/shared/lib/queryClient";
+import { invalidateAppointmentQueries } from "@/features/appointments/api/invalidateAppointmentQueries";
 
 import type { AppointmentStatus, DoctorAppointment } from "../types";
 
@@ -53,8 +53,7 @@ const { mutate: cancelMutate, isPending: isCancelPending } = useMutation({
   mutationFn: ({ appointmentId, reason }: CancelAppointmentVariables) => appointmentApi.cancel({ appointmentId, reason }),
 
   onSuccess: () => { 
-    queryClient.invalidateQueries({ queryKey: ["appointments", "me"], });
-    queryClient.invalidateQueries({queryKey: ["transactions", "me"], });
+    void invalidateAppointmentQueries();
 
     setAppointmentToCancel(null);
     setCancellationReason("");
@@ -70,8 +69,7 @@ const { mutate: cancelMutate, isPending: isCancelPending } = useMutation({
     mutationFn: (appointmentId: string) => appointmentApi.complete(appointmentId),
     onSuccess: () => {
       setCancelError('');
-      queryClient.invalidateQueries({queryKey: ['appointments', 'me']});
-      queryClient.invalidateQueries({queryKey: ['transactions', 'me']});
+      void invalidateAppointmentQueries();
     },
     onError: (error) => {
       setCompleteError(error.message)
@@ -129,7 +127,7 @@ const { mutate: cancelMutate, isPending: isCancelPending } = useMutation({
 
   const isNoAppointments = originalAppointmentList?.length === 0;
   
-  const filteredAppointments = statusFilter === 'ALL' ? originalAppointmentList : originalAppointmentList?.filter((appointment: DoctorAppointment) => appointment.verificationStatus === statusFilter);
+  const filteredAppointments = statusFilter === 'ALL' ? originalAppointmentList : originalAppointmentList?.filter((appointment: DoctorAppointment) => appointment.status === statusFilter);
 
   const isNoFilteredAppointments = filteredAppointments?.length === 0;
 

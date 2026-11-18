@@ -113,6 +113,8 @@ const DoctorAppointmentCard = ({appointment, now, cancel, complete, isCancelling
         )}
       </div>
 
+      {completeError && <p role="alert">{completeError}</p>}
+      {cancelError && <p role="alert">{cancelError}</p>}
       {appointment.status === "BOOKED" && (
         <div className="appointment-actions">
           {canJoin && (

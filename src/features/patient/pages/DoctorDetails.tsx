@@ -1,16 +1,23 @@
+import { queryKeys } from '@/shared/lib/queryKeys';
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { doctorsApi } from "../api/doctors.api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { availabilityApi } from "@/features/availability/api/availability.api";
 import type { Slot } from "@/features/availability/types";
-import queryClient from "@/shared/lib/queryClient";
+import { invalidateAppointmentQueries } from "@/features/appointments/api/invalidateAppointmentQueries";
 import { appointmentApi } from "@/features/appointments/api/appointment.api";
 import AvailabilitySlots from "../components/AvailabilitySlots";
 import { ROUTES } from "@/router/routes";
 
 
 const DoctorDetails = () => {
+    const [range] = useState(() => {
+        const from = new Date();
+        const to = new Date(from);
+        to.setDate(to.getDate() + 7);
+        return { from: from.toISOString(), to: to.toISOString() };
+    });
     const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
     const [bookingError, setBookingError] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -22,8 +29,8 @@ const DoctorDetails = () => {
     });
 
     const {data: availabilityData, isLoading: isSlotsLoading, isError: isSlotsError } = useQuery({
-        queryKey: ['slots', params.doctorId],
-        queryFn: () => availabilityApi.getSlots(params.doctorId!),
+        queryKey: [...queryKeys.slots, params.doctorId, range.from, range.to],
+        queryFn: () => availabilityApi.getSlots(params.doctorId!, range.from, range.to),
         staleTime: 0  // 0 minutes - always refresh
     });
 
@@ -34,10 +41,8 @@ const DoctorDetails = () => {
             endTime: slot.endTime,
             consultationType: 'IN_PERSON'
         }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['slots', params.doctorId]});
-            // queryClient.invalidateQueries({queryKey: ['appointments']});
-            // queryClient.invalidateQueries({queryKey: ['wallet']});
+        onSuccess: async () => {
+            await invalidateAppointmentQueries();
             navigate(ROUTES.patient.root);
         },
         onError: (error) => {
@@ -45,7 +50,7 @@ const DoctorDetails = () => {
         },
     });
 
-    const bookAppointment = () => {  
+    const bookAppointment = () => {
          if (!selectedSlot || isPending) return;
          setBookingError(null);
          mutate(selectedSlot);
@@ -72,9 +77,9 @@ const DoctorDetails = () => {
                 <h3 className="speciality">{doctor?.speciality}</h3>
                 <p>Total experience: {doctor?.experienceYears}</p>
             </section>
-            <section className="slot-section">    
-                <h2 id="availability-heading">Available appointments</h2>                              
-                <AvailabilitySlots slots={availabilityData?.slots ?? []} handleSelectSlot={handleSelectSlot} selectedSlot={selectedSlot} />                   
+            <section className="slot-section">
+                <h2 id="availability-heading">Available appointments</h2>
+                <AvailabilitySlots slots={(availabilityData?.slots ?? []).filter((slot: Slot) => slot.status === "AVAILABLE")} handleSelectSlot={handleSelectSlot} selectedSlot={selectedSlot} />
             </section>
             <button type="button" disabled={!selectedSlot || isPending} onClick={bookAppointment}>{isPending ? 'Booking...' : 'Book Appointment'}</button>
             {bookingError && <p role='alert' className='error'>{bookingError}</p> }

@@ -1,3 +1,4 @@
+import '@/shared/styles/forms.css';
 import { useEffect, useRef } from "react";
 
 interface CancellationModalProps {

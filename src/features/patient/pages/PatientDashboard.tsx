@@ -5,29 +5,34 @@ import { appointmentApi } from "@/features/appointments/api/appointment.api";
 import AppointmentCard from "@/features/appointments/components/AppointmentCard";
 import { buttonListAppointmentStatus   } from "@/features/appointments/constants";
 
-import queryClient from "@/shared/lib/queryClient";
+import { invalidateAppointmentQueries } from "@/features/appointments/api/invalidateAppointmentQueries";
 import type { Appointment } from "@/shared/types";
 import { useAuthStore } from "@/shared/store/authStore";
 import { Link } from "react-router-dom";
 import { useAppointments } from "@/features/appointments/hooks/useAppointments";
 import WalletBalanceCard from "@/features/credit/components/WalletBalanceCard";
 
+import CancellationModal from "@/features/appointments/components/CancellationModal";
+
 type StatusFilter = Appointment['status'] | 'ALL';
 
 const PatientDashboard = () => {    
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const [cancelError, setCancelError] = useState<string>('');
+  const [appointmentToCancel, setAppointmentToCancel] = useState<string | null>(null);
+  const [cancellationReason, setCancellationReason] = useState('');
 
   const {originalAppointmentList, isAppointmentsError, isAppointmentLoading} = useAppointments();
 
   
 
   const {mutate, isPending} = useMutation({
-    mutationFn: (appointmentId: string) => appointmentApi.cancel(appointmentId),
+    mutationFn: (request: Parameters<typeof appointmentApi.cancel>[0]) => appointmentApi.cancel(request),
     onSuccess: () => {
       setCancelError('');
-      queryClient.invalidateQueries({queryKey: ['appointments']});
-      queryClient.invalidateQueries({queryKey: ['transactions']});
+      setAppointmentToCancel(null);
+      setCancellationReason('');
+      void invalidateAppointmentQueries();
     },
     onError: (error) => {
       setCancelError(error.message)
@@ -38,7 +43,8 @@ const PatientDashboard = () => {
 
   const cancelAppointment = (appointmentId: string) => {
     setCancelError('');
-    mutate(appointmentId);
+    setCancellationReason('');
+    setAppointmentToCancel(appointmentId);
   };
 
   const isNoAppointments = originalAppointmentList?.length === 0;
@@ -94,9 +100,30 @@ const PatientDashboard = () => {
         {(!isNoAppointments && isNoFilteredAppointments) && <p>No {statusFilter} appointments found.</p>}
         
         {!isNoFilteredAppointments && filteredAppointments?.map((appointment: Appointment) => {
-          return (<AppointmentCard key={appointment._id} appointment={appointment} cancel={() => cancelAppointment(appointment._id)} isCancelling={isPending}/>)
+          return (<AppointmentCard key={appointment._id} appointment={appointment} cancel={() => cancelAppointment(appointment._id)} isCancelling={isPending && appointmentToCancel === appointment._id}/>)
         })}
       </section>
+      {appointmentToCancel && (
+        <CancellationModal
+          reason={cancellationReason}
+          error={cancelError}
+          isSubmitting={isPending}
+          onReasonChange={setCancellationReason}
+          onClose={() => {
+            if (!isPending) {
+              setAppointmentToCancel(null);
+              setCancellationReason('');
+              setCancelError('');
+            }
+          }}
+          onConfirm={() => {
+            const reason = cancellationReason.trim();
+            if (!reason || isPending) return;
+            setCancelError('');
+            mutate({ appointmentId: appointmentToCancel, reason });
+          }}
+        />
+      )}
     </div>
   )
 }
