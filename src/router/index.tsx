@@ -1,13 +1,15 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import React, { lazy, Suspense } from "react";
+
 import NotFound from "@/pages/NotFound";
 import HomeRedirect from "@/pages/HomeRedirect";
 import RootLayout from "@/layouts/RootLayout";
 import Onboarding from "@/features/auth/pages/Onboarding";
 import Login from "@/features/auth/pages/Login";
 import Register from "@/features/auth/pages/Register";
-import React, { lazy, Suspense } from "react";
 import ProtectedRoute from "@/shared/components/ProtectedRoute";
 import Unauthorized from "@/pages/Unauthorized";
+
 import DoctorsList from "@/features/patient/pages/DoctorsList";
 import DoctorDetails from "@/features/patient/pages/DoctorDetails";
 import PendingDoctors from "@/features/admin/pages/PendingDoctors";
@@ -19,14 +21,13 @@ import DoctorWallet from "@/features/doctor/pages/DoctorWallet";
 import DoctorAppointmentDetails from "@/features/doctor/pages/DoctorAppointmentDetails";
 import DoctorProfile from "@/features/doctor/pages/DoctorProfile";
 
-const AdminDashboard = lazy(() => import('@/features/admin/pages/AdminDashboard'))
-const DoctorDashboard = lazy(() => import('@/features/doctor/pages/DoctorDashboard'))
-const PatientDashboard = lazy(() => import('@/features/patient/pages/PatientDashboard'))
+const AdminDashboard = lazy(() => import('@/features/admin/pages/AdminDashboard'));
+const DoctorDashboard = lazy(() => import('@/features/doctor/pages/DoctorDashboard'));
+const PatientDashboard = lazy(() => import('@/features/patient/pages/PatientDashboard'));
 
-const PageSkeleton = () => <div> Loading ...</div>
 
 const withSuspense = (element: React.ReactNode) => {
-  return <Suspense fallback={<PageSkeleton />}>{element}</Suspense>
+  return <Suspense fallback={<div> Loading ...</div>}>{element}</Suspense>;
 }
 
 const router = createBrowserRouter([
@@ -79,4 +80,8 @@ const router = createBrowserRouter([
 ]);
 
 
-export default router;
+// Export a Component instead of a raw object
+export default function AppRouter() {
+  return <RouterProvider router={router} />;
+
+}

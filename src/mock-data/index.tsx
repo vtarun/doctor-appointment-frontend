@@ -1,4 +1,4 @@
-export const mockAppointments = [
+export const mockPatientAppointments = [
   {
     // TEST CASE: "Join Video" should be VISIBLE (Starts within 30 mins)
     _id: "apt_001",

@@ -1,9 +1,11 @@
-import { RouterProvider } from 'react-router-dom'
-import './App.css'
-import router from '@/router'
 import { useEffect } from 'react'
+
+import './App.css'
+
 import { useAuthStore } from '@/shared/store/authStore';
 import { authApi } from '@/features/auth/api/auth.api';
+
+import AppRouter from '@/router';
 
 const PageSkeleton = () => <div> Loading ...</div>
 
@@ -22,6 +24,7 @@ function App() {
         const user = await authApi.getMe();
         setUser(user);        
       }catch(err){
+        console.log(err);
         logout();
       }finally{
         setLoading(false);
@@ -34,7 +37,8 @@ function App() {
   if(isLoading) return <PageSkeleton />
   return (
     <>
-      <RouterProvider router={router} />
+     <AppRouter />;
+      {/* <RouterProvider router={router} /> */}
     </>
   )
 }

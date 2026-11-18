@@ -15,6 +15,7 @@ const ReviewAndSubmit = ({onEditSteps}: ReviewAndSubmitProps) => {
     credential,
     clinicName,
     city,
+    bio,
     consultationType,
     consultationFee} = useWatch({ control });
 
@@ -53,6 +54,7 @@ const ReviewAndSubmit = ({onEditSteps}: ReviewAndSubmitProps) => {
       <p>Clinic name : <b>{clinicName}</b></p>
       <p>City : <b>{city}</b></p>
       <p>Consultation type : <b>{consultationType}</b></p>
+      <p>Bio: {bio}</p>
       <p>Consultation fee: {consultationFee}</p>
 
       <button

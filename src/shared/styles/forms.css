@@ -1,17 +1,4 @@
-.form-page { padding: 1.5rem; text-align: left; }
-.form-card { padding: 1.5rem; margin-block: 1rem; border: 1px solid var(--border); border-radius: .75rem; background: var(--bg); }
-.form-title { font-size: 2rem; color: var(--text-h); }
-.form-subtitle { margin-top: .5rem; }
-.form-label { display: block; margin-bottom: .5rem; font-weight: 600; }
-.form-input { box-sizing: border-box; width: 100%; padding: .75rem; border: 1px solid var(--border); border-radius: .5rem; color: var(--text-h); background: var(--bg); }
-.form-button { display: inline-block; padding: .65rem 1rem; border: 1px solid var(--accent-border); border-radius: .5rem; text-decoration: none; cursor: pointer; }
-.form-button-primary { background: var(--accent); color: var(--bg); }
-.form-button-secondary { background: var(--accent-bg); color: var(--text-h); }
-.form-button:disabled { opacity: .5; cursor: wait; }
-.form-feedback { margin-top: .75rem; }
-.form-error { color: #d32f2f; }
-.form-success { color: #16803d; }
 .modal-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 1rem; background: #0009; }
-.cancellation-modal { box-sizing: border-box; width: min(100%, 32rem); padding: 1.5rem; border-radius: .75rem; background: var(--bg); text-align: left; }
+.cancellation-modal { box-sizing: border-box; width: min(100%, 32rem); padding: 1.5rem; border-radius: .75rem; background: var(--color-panel); text-align: left; }
 .cancellation-modal textarea { box-sizing: border-box; width: 100%; margin-top: .5rem; }
 .modal-actions { display: flex; justify-content: flex-end; gap: .75rem; margin-top: 1rem; }

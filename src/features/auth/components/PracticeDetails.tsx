@@ -10,7 +10,7 @@ const PracticeDetails = () => {
       <input id="clinicName" {...register("clinicName") } />
       {errors.clinicName && <p>{errors.clinicName.message}</p>}
 
-      <label htmlFor="city">Date of Birth</label>
+      <label htmlFor="city">City</label>
       <input id="city" {...register("city")} />
       {errors.city && <p>{errors.city.message}</p>}
 
@@ -22,6 +22,10 @@ const PracticeDetails = () => {
         <option value="BOTH">Both</option>
       </select>
       {errors.consultationType && <p>{errors.consultationType.message}</p>}
+
+      <label htmlFor="bio">Professional bio</label>
+      <textarea id="bio" {...register("bio")} />
+      {errors.bio && <p>{errors.bio.message}</p>}
 
       <label htmlFor="consultationFee">Consultation Fee</label>
       <input id="consultationFee" {...register("consultationFee")} />

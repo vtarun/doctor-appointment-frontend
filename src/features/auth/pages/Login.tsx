@@ -5,10 +5,11 @@ import { useForm } from "react-hook-form";
 import { loginSchema } from "@/features/auth/schemas/login.schema";
 import type { LoginFormData } from "@/features/auth/schemas/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { formStyles as ui } from "@/shared/styles/formStyles";
 
 const Login = () => {
   const { login } = useAuthStore();
-  const { register, formState: { errors, isSubmitting, isValid}, handleSubmit, setError } = useForm<LoginFormData>({
+  const { register, formState: { errors, isSubmitting }, handleSubmit, setError } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema)
   });
   const navigate = useNavigate();
@@ -31,27 +32,86 @@ const Login = () => {
         navigate('/onboarding', {replace : true});
       }
     }catch(err){
-      console.error("Invalid email or password!");
+      console.error("Invalid email or password!", err);
       setError('root', {message: 'Invalid email or password!'});
     }    
   }
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <label htmlFor="user-email">
-          <input id="user-email" type="email" {...register('email')} />
-        </label>
-        {errors.email && <span>{errors.email.message}</span> }
-        <label htmlFor="user-password">
-          <input id="user-password" type="password" {...register('password')} />
-        </label>
-        <button type="submit" disabled={isSubmitting || !isValid}>Login</button>
-        <p><Link to="/test">forgot password?</Link></p>      
-        {errors.root && <span>{errors.root.message}</span> }
+  <main className={`${ui.page} grid place-items-center`}>
+    <section className={`${ui.card} w-full max-w-md`}>
+      <div className="mb-8 text-center">
+        <p className="mb-3 text-sm font-semibold tracking-widest text-emerald-400">
+          DOCTOR APPOINTMENTS
+        </p>
+        <h1 className={ui.title}>Welcome back</h1>
+        <p className={ui.subtitle}>
+          Sign in to manage your appointments.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <div>
+          <label className={ui.label} htmlFor="user-email">
+            Email
+          </label>
+          <input
+            id="user-email"
+            type="email"
+            autoComplete="email"
+            className={ui.input}
+            placeholder="you@example.com"
+            {...register("email")}
+          />
+          {errors.email && (
+            <p className={ui.error} role="alert">
+              {errors.email.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className={ui.label} htmlFor="user-password">
+            Password
+          </label>
+          <input
+            id="user-password"
+            type="password"
+            autoComplete="current-password"
+            className={ui.input}
+            {...register("password")}
+          />
+          {errors.password && (
+            <p className={ui.error} role="alert">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+
+        {errors.root && (
+          <p className={ui.error} role="alert">
+            {errors.root.message}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className={`${ui.primaryButton} w-full`}
+        >
+          {isSubmitting ? "Signing in..." : "Sign in"}
+        </button>
       </form>
-    </div>
-  )
+
+      <p className="mt-6 text-center text-sm text-muted-ink">
+        New here?{" "}
+        <Link to="/register" className="font-medium text-emerald-400 hover:text-emerald-300">
+          Create an account
+        </Link>
+      </p>
+    </section>
+  </main>
+);
 }
 
 export default Login

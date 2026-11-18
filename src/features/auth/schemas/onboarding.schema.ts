@@ -38,6 +38,7 @@ export const practiceDetailsSchema = z.object({
     city: z.string()
         .min(3, 'Please enter valid city name')
         .max(15 , 'Maximun 15 characters are allowed'),
+    bio: z.string().min(10, "Bio must be at least 10 characters"),
     consultationType: z.enum(['ONLINE' , 'IN_PERSON' , 'BOTH']),
     consultationFee: z.coerce.number().min(0, 'Fee can not be negative').pipe(z.number())
 });

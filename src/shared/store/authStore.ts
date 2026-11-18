@@ -12,7 +12,7 @@ interface AuthStore{
 
 const getStoreduser = () : User | null => {
     try{
-        let storedUser = localStorage.getItem('user');
+        const storedUser = localStorage.getItem('user');
         const user = storedUser ? JSON.parse(storedUser) : null;
         return user;
     }catch{

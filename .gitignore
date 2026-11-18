@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 src/*/*/mock-data
+src/mock-data
+src/test
 *.local
 
 # Editor directories and files

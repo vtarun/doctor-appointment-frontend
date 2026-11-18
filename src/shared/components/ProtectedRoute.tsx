@@ -4,7 +4,7 @@ import type { UserRoleType } from "../types";
 
 interface ProtectedRouteProps{
   allowedRoles?: UserRoleType[],
-  onboardingOnly?: Boolean
+  onboardingOnly?: boolean
 }
 
 const ProtectedRoute = ({allowedRoles = [], onboardingOnly= false} : ProtectedRouteProps) => {

@@ -21,7 +21,7 @@ export const registrationSchema = z.object({
     message: "Password didn't match",
     path:['confirmPassword']
 })
-.transform(({ confirmPassword, ...rest }) => rest);
+.transform(({ confirmPassword: _confirmPassword, ...rest }) => rest);
 
 export type registrationInput = z.input<typeof registrationSchema>
 export type registrationOutput = z.output<typeof registrationSchema>

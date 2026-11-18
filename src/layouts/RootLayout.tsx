@@ -3,9 +3,9 @@ import { useAuthStore } from "@/shared/store/authStore";
 import { Outlet } from "react-router-dom";
 
 const RootLayout = () => {
-  const { user} = useAuthStore();
-  // const role = !isLoading && isAuthenticated ?  user?.role : null;
-  const role = 'DOCTOR'; // TODO: remove after local test
+  const { isAuthenticated, isLoading, user} = useAuthStore();
+  const role = !isLoading && isAuthenticated ?  user?.role : null;
+  // const role = 'DOCTOR'; // TODO: remove after local test
   
   return (
     <div>
