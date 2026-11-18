@@ -1,3 +1,4 @@
+import { queryKeys } from '@/shared/lib/queryKeys';
 import { useMemo, useState, type SubmitEventHandler } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -41,7 +42,7 @@ const DoctorAvailability = () => {
   });
 
   const availabilityQuery = useQuery({
-    queryKey: ["doctor-availability", doctor?._id, selectedDate],
+    queryKey: [...queryKeys.doctorAvailability, doctor?._id, selectedDate],
     queryFn: () =>
       availabilityApi.getSlots(doctor!._id, range.from, range.to),
     enabled: Boolean(
@@ -63,7 +64,7 @@ const DoctorAvailability = () => {
       );
 
       queryClient.invalidateQueries({
-        queryKey: ["doctor-availability", doctor?._id, selectedDate]
+        queryKey: [...queryKeys.doctorAvailability, doctor?._id, selectedDate]
       });
     },
 
@@ -82,7 +83,7 @@ const DoctorAvailability = () => {
       setMessage("Availability removed.");
 
       queryClient.invalidateQueries({
-        queryKey: ["doctor-availability", doctor?._id, selectedDate]
+        queryKey: [...queryKeys.doctorAvailability, doctor?._id, selectedDate]
       });
     },
 

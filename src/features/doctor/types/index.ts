@@ -31,7 +31,7 @@ export interface DoctorAppointment {
   issueNote?: string;
   startTime: string;
   endTime: string;
-  verificationStatus: AppointmentStatus;
+  status: AppointmentStatus;
   consultationType: ConsultationType;
   videoSessionId?: string;
   doctorNotes?: string;

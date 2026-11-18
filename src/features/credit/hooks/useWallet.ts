@@ -1,9 +1,10 @@
+import { queryKeys } from '@/shared/lib/queryKeys';
 import { useQuery } from "@tanstack/react-query";
 import { creditApi } from "../api/credit.api";
 
 export const useWallet = () => {
     const {data: wallet , isError, isLoading} = useQuery({
-        queryKey: ['wallet'],
+        queryKey: queryKeys.wallet,
         queryFn: () => creditApi.getWallet(),
     }); 
 

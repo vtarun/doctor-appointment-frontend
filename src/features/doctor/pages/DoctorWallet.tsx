@@ -1,3 +1,4 @@
+import { queryKeys } from '@/shared/lib/queryKeys';
 import axios from 'axios';
 import { useState, type SubmitEventHandler } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -42,12 +43,12 @@ const DoctorWallet = () => {
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const summaryQuery = useQuery({
-    queryKey: ['payouts', 'me', 'summary'],
+    queryKey: queryKeys.payoutSummary,
     queryFn: earningsApi.getSummary
   });
 
   const {data: transactions = [], isError: isTransactionsError, isLoading: isTransactionsLoading, error} = useQuery<CreditTransaction[]>({
-    queryKey: ['transactions', 'me'],
+    queryKey: queryKeys.transactions,
     queryFn: earningsApi.getTransactions
   });
 
@@ -57,8 +58,9 @@ const DoctorWallet = () => {
       setFeedback('Payout request submitted.');
       setCreditsRequested('');
       await Promise.all([
-        queryClient.invalidateQueries({queryKey: ['payouts', 'me', 'summary']}),
-        queryClient.invalidateQueries({queryKey: ['transactions', 'me']})
+        queryClient.invalidateQueries({queryKey: queryKeys.payoutSummary}),
+        queryClient.invalidateQueries({queryKey: queryKeys.transactions}),
+        queryClient.invalidateQueries({queryKey: queryKeys.wallet})
       ]);
     },
     onError: () => setFeedback(null)

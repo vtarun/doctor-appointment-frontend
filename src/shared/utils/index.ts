@@ -1,4 +1,4 @@
-import type { AvailabilityWindow, AvailabilityWindowInput } from "@/features/availability/types";
+import type { AvailabilityWindow } from "@/features/availability/types";
 import axios from "axios";
 
 export const calculateAge = (dateOfBirth: string) => {
