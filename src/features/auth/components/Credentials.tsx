@@ -23,7 +23,6 @@ const Credentials = () => {
             <option value="MBBS">MBBS</option>
             <option value="MS">MS</option>
             <option value="MD">MD</option>
-            <option value="GOD">GOD Level</option>
           </select>
           {errors.qualification && <p className={ui.error}>{errors.qualification.message}</p>}
 

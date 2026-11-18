@@ -12,8 +12,11 @@ dist
 dist-ssr
 src/*/*/mock-data
 src/mock-data
+src/tests
 src/test
 *.local
+tasks.md
+tests
 
 # Editor directories and files
 .vscode/*

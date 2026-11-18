@@ -14,6 +14,7 @@ import Credentials from "../components/Credentials";
 
 import { useAuthStore } from "@/shared/store/authStore";
 import { authApi } from "../api/auth.api";
+import { getApiErrorMessage } from "@/shared/api/apiError";
 
 type RoleChoice = 'PATIENT' | 'DOCTOR';
 
@@ -51,8 +52,11 @@ const Onboarding = () => {
     consultationFee: 0
     }
   });
+  const { isSubmitting } = methods.formState;
 
   const selectRole = async (role: RoleChoice) => {
+    if (savingRole || isSubmitting) return;
+
     const confirmed = window.confirm(
       role === 'PATIENT'
         ? 'Continue as a patient?'
@@ -76,9 +80,9 @@ const Onboarding = () => {
 
       setUser(updatedUser);
       navigate('/patient', { replace: true });
-    } catch {
+    } catch (error) {
       setSelectedRole(null);
-      setRoleError('Could not save your choice. Please try again.');
+      setRoleError(getApiErrorMessage(error, "Could not save your choice. Please try again."));
     } finally {
       setSavingRole(false);
     }
@@ -88,13 +92,13 @@ const Onboarding = () => {
   const onSubmit = async (data: OnboardingFormData) => {
     setSubmitError("");
 
-  try {
-    const { user: updatedUser } = await authApi.onboardDoctor(data);
-    setUser(updatedUser);
-    navigate("/doctor", { replace: true });
-  } catch {
-    setSubmitError("Could not submit your doctor profile. Please try again.");
-  }
+    try {
+      const { user: updatedUser } = await authApi.onboardDoctor(data);
+      setUser(updatedUser);
+      navigate("/doctor", { replace: true });
+    } catch (error) {
+      setSubmitError(getApiErrorMessage(error, "Could not submit your doctor profile. Please try again."));
+    }
   }
 
   const handleNextStep = async () => {
@@ -140,7 +144,7 @@ const Onboarding = () => {
                     name="role"
                     value={role}
                     checked={selectedRole === role}
-                    disabled={savingRole}
+                    disabled={savingRole || isSubmitting}
                     onChange={() => selectRole(role)}
                     className="h-4 w-4 accent-emerald-500"
                   />
@@ -166,6 +170,7 @@ const Onboarding = () => {
           <section className={`${ui.card} mx-auto max-w-2xl`}>
             <button
               type="button"
+              disabled={isSubmitting}
               className="mb-6 text-sm text-emerald-400 hover:text-emerald-300"
               onClick={() => {
                 setDoctorConfirmed(false);
@@ -211,6 +216,7 @@ const Onboarding = () => {
                   {currentStep > 1 ? (
                     <button
                       type="button"
+                      disabled={isSubmitting}
                       className={ui.secondaryButton}
                       onClick={handlePreviousStep}
                     >
@@ -221,6 +227,7 @@ const Onboarding = () => {
                   {currentStep < 4 && (
                     <button
                       type="button"
+                      disabled={isSubmitting}
                       className={ui.primaryButton}
                       onClick={handleNextStep}
                     >

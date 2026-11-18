@@ -2,8 +2,8 @@ import { z } from 'zod'
 
 export const personalInfoSchema = z.object({
     fullname: z.string()
-        .min(3, "Minimun 3 characters required")
-        .max(15 , 'Maximun 15 characters are allowed'),
+        .min(3, "Full name must be at least 3 characters")
+        .max(15, "Full name must be at most 15 characters"),
     dateOfBirth: z.iso.date({
         error: () => ({ message: "Please select a date of birth"})
     }),
@@ -17,15 +17,16 @@ export type PersonalInfoFormData = z.infer<typeof personalInfoSchema>;
 
 export const credentialSchema = z.object({
     speciality: z.string()
-        .min(1, "Pleae select fron dropdown"),
+        .min(1, "Enter your speciality"),
     totalExperience: z.coerce.number()
-        .min(0, 'Experience can not be negative').pipe(z.number()),
-    qualification: z.enum(['MBBS', 'MS', 'MD', 'GOD'] as const, {
+        .int("Experience must be a whole number of years")
+        .min(0, "Experience cannot be negative"),
+    qualification: z.enum(['MBBS', 'MS', 'MD'] as const, {
         error: () => ({ message: 'Please select a qualification'})
     }),
-    credential: z.instanceof(File)        
-        .refine(file => file.size <= 2 * 1024 *1024, { message: 'File must be under 2MB'})
-        .refine(file => ['application/pdf', 'image/jpeg', 'image/jpg'].includes(file.type), {message: 'PDF or JPEG or JPG only' })        
+    credential: z.instanceof(File, { error: "Upload a credential file" })
+        .refine(file => file.size < 2 * 1024 * 1024, { message: "File must be under 2 MB" })
+        .refine(file => ['application/pdf', 'image/jpeg', 'image/jpg'].includes(file.type), { message: "Upload a PDF or JPEG file" })
 });
 
 export type CredentialFormData = z.infer<typeof credentialSchema>;
@@ -33,13 +34,15 @@ export type CredentialFormData = z.infer<typeof credentialSchema>;
 
 export const practiceDetailsSchema = z.object({
     clinicName: z.string()
-        .min(3, "Minimun 6 characters required")
-        .max(15 , 'Maximun 15 characters are allowed'),
+        .min(3, "Clinic name must be at least 3 characters")
+        .max(15, "Clinic name must be at most 15 characters"),
     city: z.string()
-        .min(3, 'Please enter valid city name')
-        .max(15 , 'Maximun 15 characters are allowed'),
+        .min(3, "City must be at least 3 characters")
+        .max(15, "City must be at most 15 characters"),
     bio: z.string().min(10, "Bio must be at least 10 characters"),
-    consultationType: z.enum(['ONLINE' , 'IN_PERSON' , 'BOTH']),
+    consultationType: z.enum(['ONLINE', 'IN_PERSON', 'BOTH'], {
+        error: "Select a consultation type"
+    }),
     consultationFee: z.coerce.number().min(0, 'Fee can not be negative').pipe(z.number())
 });
 

@@ -28,6 +28,7 @@ const ReviewAndSubmit = ({onEditSteps}: ReviewAndSubmitProps) => {
       <p>Gender : <b>{gender}</b></p>
       <button
           type="button"
+          disabled={isSubmitting}
           onClick={() => onEditSteps(1)}
         >
           Edit
@@ -43,6 +44,7 @@ const ReviewAndSubmit = ({onEditSteps}: ReviewAndSubmitProps) => {
 
       <button
           type="button"
+          disabled={isSubmitting}
           onClick={() => onEditSteps(2)}
         >
           Edit
@@ -59,6 +61,7 @@ const ReviewAndSubmit = ({onEditSteps}: ReviewAndSubmitProps) => {
 
       <button
           type="button"
+          disabled={isSubmitting}
           onClick={() => onEditSteps(3)}
         >
           Edit

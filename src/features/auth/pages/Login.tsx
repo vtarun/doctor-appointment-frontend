@@ -6,6 +6,7 @@ import { loginSchema } from "@/features/auth/schemas/login.schema";
 import type { LoginFormData } from "@/features/auth/schemas/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formStyles as ui } from "@/shared/styles/formStyles";
+import { getApiErrorMessage } from "@/shared/api/apiError";
 
 const Login = () => {
   const { login } = useAuthStore();
@@ -32,8 +33,11 @@ const Login = () => {
         navigate('/onboarding', {replace : true});
       }
     }catch(err){
-      console.error("Invalid email or password!", err);
-      setError('root', {message: 'Invalid email or password!'});
+      setError('root', {
+        message: getApiErrorMessage(err, "Could not sign in. Please try again.", {
+          401: "Invalid email or password.",
+        }),
+      });
     }    
   }
 
