@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom";
 import { useWallet } from "../hooks/useWallet";
-import { mockWallet } from "@/mock-data";
 
 interface WalletBalanceCardProps{
     detailsPath?: string
 }
 
 const WalletBalanceCard = ({detailsPath}: WalletBalanceCardProps) => {
-  const { wallet=mockWallet, isLoading, isError } = useWallet();
+  const { wallet, isLoading, isError } = useWallet();
 
   const renderBalanceState = () => {
     if (isLoading) {

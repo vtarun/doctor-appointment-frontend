@@ -75,7 +75,7 @@ export default function Navbar({ role, name = "Account", photo }: NavbarProps) {
     <header className="border-b border-line bg-panel">
       <nav aria-label="Main navigation" className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:flex-nowrap sm:px-6">
         <NavLink to="/" className={`shrink-0 rounded-sm font-bold text-emerald-300 ${focusStyle}`}>MediBuddy</NavLink>
-        <ul className="order-last flex w-full flex-wrap items-center gap-x-4 gap-y-1 text-sm sm:order-none sm:w-auto sm:flex-1">
+        <ul className="order-last flex w-full flex-wrap items-center gap-x-4 gap-y-1 text-sm sm:order-0 sm:w-auto sm:flex-1">
           {NavbarRoleBasedLinks[role].map(({ to, label }) => (
             <li key={to}>
               <NavLink to={to} end={to === NavbarRoleBasedLinks[role][0]?.to}

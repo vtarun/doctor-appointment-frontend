@@ -1,10 +1,9 @@
 import { useTransactions } from "@/features/credit/hooks/useTransactions";
 import WalletBalanceCard from "@/features/credit/components/WalletBalanceCard";
 import TransactionList from "@/features/credit/components/TransactionList";
-// import { mockTransactions } from "@/mock-data";
 const PatientWallet = () => {
   const {
-    transactions = [], //mockTransactions,
+    transactions = [],
     isLoading,
     isError,
   } = useTransactions();

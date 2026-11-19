@@ -7,10 +7,11 @@ import DoctorRejectedStatus from "../components/DoctorRejectedStatus";
 import WalletBalanceCard from "@/features/credit/components/WalletBalanceCard";
 import DoctorAppointmentCard from "@/features/appointments/components/DoctorAppointmentCard";
 import { useAppointments } from "@/features/appointments/hooks/useAppointments";
-import { appointmentApi } from "@/features/appointments/api/appointment.api";
+import NextAppointment from "@/features/appointments/components/NextAppointment";
 import { buttonListAppointmentStatus } from "@/features/appointments/constants";
 import CancellationModal from "@/features/appointments/components/CancellationModal";
 
+import { appointmentApi } from "@/features/appointments/api/appointment.api";
 import { invalidateAppointmentQueries } from "@/features/appointments/api/invalidateAppointmentQueries";
 
 import type { AppointmentStatus, DoctorAppointment } from "../types";
@@ -48,7 +49,8 @@ const DoctorDashboard = () => {
   });
 
 
-  const {originalAppointmentList, isAppointmentsError, isAppointmentLoading} = useAppointments();
+  const appointments = useAppointments('doctor');
+  const { data: originalAppointmentList, isError: isAppointmentsError, isLoading: isAppointmentLoading } = appointments;
  
 
 
@@ -163,19 +165,6 @@ const { mutate: cancelMutate, isPending: isCancelPending } = useMutation({
     return <DoctorRejectedStatus reason= {doctor?.rejectionReason} />
   }
 
-  if (isAppointmentLoading) {
-    return <p>Loading appointments...</p>;
-  }
-
-  if (isAppointmentsError) {
-    return (
-      <p role="alert">
-        Unable to load appointments. Please try again.
-      </p>
-    );
-  }
-
-
   return (
       <main className={ui.page}>
         <div className="mx-auto max-w-6xl space-y-8">
@@ -232,19 +221,13 @@ const { mutate: cancelMutate, isPending: isCancelPending } = useMutation({
               <WalletBalanceCard detailsPath="wallet" />
             </section>
 
-            <section className={ui.card}>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-400">
-                Next appointment
-              </p>
-
-              {/* TODO: Replace this placeholder with appointment API data */}
-              <p className="mt-5 text-xl font-semibold text-ink">
-                Today, 4:30 PM
-              </p>
-              <p className="mt-2 text-sm text-muted-ink">
-                Patient name - Test test
-              </p>
-            </section>
+            <NextAppointment
+              appointments={originalAppointmentList}
+              isLoading={appointments.isPending || (isAppointmentsError && appointments.isFetching)}
+              isError={isAppointmentsError}
+              retry={() => void appointments.refetch()}
+              role="doctor"
+            />
           </div>
 
           {/* Availability */}
@@ -267,7 +250,7 @@ const { mutate: cancelMutate, isPending: isCancelPending } = useMutation({
           </section>
 
           {/* Appointments */}
-          <section className={ui.card}>
+          <section id="dashboard-appointments" tabIndex={-1} className={ui.card + " scroll-mt-24"}>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-ink">
@@ -298,6 +281,8 @@ const { mutate: cancelMutate, isPending: isCancelPending } = useMutation({
               ))}
             </ul>
 
+            {isAppointmentLoading && <p role="status">Loading appointments...</p>}
+            {isAppointmentsError && <p role="alert">Unable to load appointments.</p>}
             {isNoAppointments && (
               <p className="mt-8 rounded-lg border border-dashed border-line bg-surface p-6 text-sm text-muted-ink">
                 You do not have any appointments yet.

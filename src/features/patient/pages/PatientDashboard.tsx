@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 
-import { appointmentApi } from "@/features/appointments/api/appointment.api";
+import NextAppointment from "@/features/appointments/components/NextAppointment";
 import AppointmentCard from "@/features/appointments/components/AppointmentCard";
 import { buttonListAppointmentStatus   } from "@/features/appointments/constants";
 
+import { appointmentApi } from "@/features/appointments/api/appointment.api";
 import { invalidateAppointmentQueries } from "@/features/appointments/api/invalidateAppointmentQueries";
 import type { Appointment } from "@/shared/types";
 import { useAuthStore } from "@/shared/store/authStore";
@@ -22,7 +23,8 @@ const PatientDashboard = () => {
   const [appointmentToCancel, setAppointmentToCancel] = useState<string | null>(null);
   const [cancellationReason, setCancellationReason] = useState('');
 
-  const {originalAppointmentList, isAppointmentsError, isAppointmentLoading} = useAppointments();
+  const appointments = useAppointments('patient');
+  const { data: originalAppointmentList, isError: isAppointmentsError, isLoading: isAppointmentLoading } = appointments;
 
   
 
@@ -53,9 +55,7 @@ const PatientDashboard = () => {
 
   const isNoFilteredAppointments = filteredAppointments?.length === 0;
 
-  if(isAppointmentLoading) return <p>Loading appointments...</p>
 
-  if(isAppointmentsError) return <p>Error loading appointments list</p>
 
   return (
     <div>   
@@ -65,22 +65,23 @@ const PatientDashboard = () => {
         <p>Manage your appointments and consultations.</p>
         </div>
         <div>
-          <button type='button'><Link to='doctors'>Find a doctor<span></span></Link></button> 
+          <Link to="doctors">Find a doctor</Link>
         </div>
       </section>
 
-      <div className='cards'>
+      <div className="grid gap-6 px-4 lg:grid-cols-2">
           <WalletBalanceCard detailsPath="wallet" />
 
-          <div className='card'>
-            {/* TODO: Replace with appointment API data */}
-            <p>Next appointment</p>
-            <p><b>Today, 4:30 PM</b></p>
-            <p>Video. Dr. Vijya nair</p>
-          </div>
+          <NextAppointment
+              appointments={originalAppointmentList}
+              isLoading={appointments.isPending || (isAppointmentsError && appointments.isFetching)}
+              isError={isAppointmentsError}
+              retry={() => void appointments.refetch()}
+              role="patient"
+            />
         </div>
   
-      <section className="section-appointment">
+      <section id="dashboard-appointments" tabIndex={-1} className="section-appointment scroll-mt-24">
         
         
         {cancelError && <p style={{color: 'red'}}>{cancelError}</p>}
@@ -88,13 +89,15 @@ const PatientDashboard = () => {
         {/* Add filter to show speciefic appointments */}
         <div>
           <h3 style={{display: 'block', marginLeft: '25px'}}>My Appointments <span>{filteredAppointments?.length ?? 0} appointments</span></h3>
-          <ul style={{display: 'flex', listStyle: 'none', gap: '20px' }}>
+          <ul style={{display: 'flex', listStyle: 'none', gap: '20px', flexWrap: 'wrap' }}>
             {buttonListAppointmentStatus.map((status) => <li key={status} ><button onClick={() => setStatusFilter(status)} className={status === statusFilter ? 'active' : ''}>{status}</button></li>)}      
           </ul>
         </div>
 
         
 
+        {isAppointmentLoading && <p role="status">Loading appointments...</p>}
+        {isAppointmentsError && <p role="alert">Unable to load appointments.</p>}
         {isNoAppointments && <p>You do not have any appointments yet.</p>}
 
         {(!isNoAppointments && isNoFilteredAppointments) && <p>No {statusFilter} appointments found.</p>}
