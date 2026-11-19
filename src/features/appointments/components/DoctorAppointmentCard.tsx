@@ -1,6 +1,9 @@
 import type { DoctorAppointment } from "@/features/doctor/types"
 import { calculateAge, formatConsultationType, formatTime } from "@/shared/utils";
-import { useNavigate } from "react-router-dom";
+import { generatePath, Link } from "react-router-dom";
+import { ROUTES } from "@/router/routes";
+import JoinVideo from "./JoinVideo";
+import { appointmentCopy } from "@/features/appointments/constants";
 
 interface DoctorAppointmentCardProps{
   appointment: DoctorAppointment, 
@@ -13,19 +16,15 @@ interface DoctorAppointmentCardProps{
   cancelError: string
 }
 const DoctorAppointmentCard = ({appointment, now, cancel, complete, isCancelling, isCompleting, completeError, cancelError}: DoctorAppointmentCardProps) => {
-  const navigate = useNavigate();
+
 
   const startTime = new Date(appointment.startTime).getTime();
   const endTime = new Date(appointment.endTime).getTime();
 
-  const joinWindowStart = startTime - 30 * 60 * 1000;
+
   const cancellationDeadline = startTime - 30 * 60 * 1000;
 
-  const canJoin =
-    appointment.status === "BOOKED" &&
-    appointment.consultationType === "VIDEO" &&
-    now >= joinWindowStart &&
-    now < endTime;
+
 
   const canCancel = 
     appointment.status === "BOOKED" &&
@@ -37,11 +36,7 @@ const DoctorAppointmentCard = ({appointment, now, cancel, complete, isCancelling
 
   const patientAge = appointment.patientId.dateOfBirth ? calculateAge(appointment.patientId.dateOfBirth) : undefined;
 
-  const handleJoinVideo = () => {
-    navigate(
-      `/video-call?appointmentId=${encodeURIComponent(appointment._id)}`
-    );
-  };
+
 
   return (
     <article className="doctor-appointment-card card">
@@ -50,7 +45,7 @@ const DoctorAppointmentCard = ({appointment, now, cancel, complete, isCancelling
           {appointment.patientId.profileImageUrl ? (
             <img
               src={appointment.patientId.profileImageUrl}
-              alt={`${appointment.patientId.userId.name}'s profile`}
+              alt={appointmentCopy.patientPhotoAlt(appointment.patientId.userId.name)}
             />
           ) : (
             <div aria-hidden="true" className="patient-avatar-placeholder">
@@ -64,7 +59,7 @@ const DoctorAppointmentCard = ({appointment, now, cancel, complete, isCancelling
             {(patientAge !== undefined ||
               appointment.patientId.gender !== undefined) && (
               <p>
-                {patientAge !== undefined && `${patientAge} years`}
+                {patientAge !== undefined && appointmentCopy.patientAge(patientAge)}
 
                 {patientAge !== undefined &&
                   appointment.patientId.gender &&
@@ -83,12 +78,12 @@ const DoctorAppointmentCard = ({appointment, now, cancel, complete, isCancelling
 
       <div className="appointment-details">
         <p>
-          <strong>Consultation:</strong>{" "}
+          <strong>{appointmentCopy.consultationLabel}</strong>{" "}
           {formatConsultationType(appointment.consultationType)}
         </p>
 
         <p>
-          <strong>Time:</strong>{" "}
+          <strong>{appointmentCopy.timeLabel}</strong>{" "}
           <time dateTime={appointment.startTime}>
             {formatTime(appointment.startTime)}
           </time>
@@ -100,14 +95,14 @@ const DoctorAppointmentCard = ({appointment, now, cancel, complete, isCancelling
 
         {appointment.issueNote && (
           <div className="appointment-issue">
-            <h4>Reason for appointment</h4>
+            <h4>{appointmentCopy.reason}</h4>
             <p>{appointment.issueNote}</p>
           </div>
         )}
 
         {appointment.doctorNotes && (
           <div className="doctor-notes">
-            <h4>Consultation notes</h4>
+            <h4>{appointmentCopy.consultationNotes}</h4>
             <p>{appointment.doctorNotes}</p>
           </div>
         )}
@@ -115,13 +110,13 @@ const DoctorAppointmentCard = ({appointment, now, cancel, complete, isCancelling
 
       {completeError && <p role="alert">{completeError}</p>}
       {cancelError && <p role="alert">{cancelError}</p>}
+      <div className="flex flex-wrap items-center gap-4">
+        <Link className="text-emerald-300 underline" to={generatePath(ROUTES.doctor.appointmentDetails, { appointmentId: appointment._id })}>{appointmentCopy.viewDetails}</Link>
+        <JoinVideo appointment={appointment} />
+      </div>
       {appointment.status === "BOOKED" && (
         <div className="appointment-actions">
-          {canJoin && (
-            <button type="button" onClick={handleJoinVideo}>
-              Join video
-            </button>
-          )}
+
 
           {canCancel && (
             <button
@@ -129,7 +124,7 @@ const DoctorAppointmentCard = ({appointment, now, cancel, complete, isCancelling
               onClick={cancel}
               disabled={isCancelling || isCompleting}
             >
-              {isCancelling ? "Cancelling..." : "Cancel"}
+              {isCancelling ? appointmentCopy.cancelling : appointmentCopy.cancel}
             </button>
           )}
 
@@ -139,7 +134,7 @@ const DoctorAppointmentCard = ({appointment, now, cancel, complete, isCancelling
               onClick={complete}
               disabled={isCompleting || isCancelling}
             >
-              {isCompleting ? "Completing..." : "Complete"}
+              {isCompleting ? appointmentCopy.completing : appointmentCopy.complete}
             </button>
           )}
         </div>

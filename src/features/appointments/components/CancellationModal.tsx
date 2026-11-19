@@ -1,5 +1,5 @@
-import '@/shared/styles/forms.css';
-import { useEffect, useRef } from "react";
+import Modal from "@/shared/components/Modal";
+import { appointmentCopy, cancellationReasonMaxLength } from "@/features/appointments/constants";
 
 interface CancellationModalProps {
   reason: string;
@@ -10,107 +10,28 @@ interface CancellationModalProps {
   onClose: () => void;
 }
 
-const CancellationModal = ({
-  reason,
-  error,
-  isSubmitting,
-  onReasonChange,
-  onConfirm,
-  onClose,
-}: CancellationModalProps) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    textareaRef.current?.focus();
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !isSubmitting) {
-        onClose();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isSubmitting, onClose]);
-
-  const trimmedReason = reason.trim();
-  const isConfirmDisabled =
-    !trimmedReason || isSubmitting;
-
+export default function CancellationModal({
+  reason, error, isSubmitting, onReasonChange, onConfirm, onClose,
+}: CancellationModalProps) {
   return (
-    <div
-      className="modal-backdrop"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget && !isSubmitting) {
-          onClose();
-        }
-      }}
-    >
-      <section
-        className="cancellation-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cancellation-modal-title"
-        aria-describedby="cancellation-modal-description"
-      >
-        <h2 id="cancellation-modal-title">
-          Cancel appointment
-        </h2>
-
-        <p id="cancellation-modal-description">
-          Please provide a reason for cancelling this appointment.
-        </p>
-
-        <label htmlFor="cancellation-reason">
-          Cancellation reason
+    <Modal title={appointmentCopy.cancelAppointment} onClose={onClose} busy={isSubmitting}>
+      <form className="space-y-4" onSubmit={(event) => {
+        event.preventDefault();
+        if (reason.trim() && !isSubmitting) onConfirm();
+      }}>
+        <label className="block">{appointmentCopy.cancellationReason}{" "}<textarea className="mt-1 block w-full rounded-md border border-line bg-surface p-3" autoFocus
+            value={reason} rows={4} maxLength={cancellationReasonMaxLength} disabled={isSubmitting}
+            onChange={(event) => onReasonChange(event.target.value)} />
         </label>
-
-        <textarea
-          ref={textareaRef}
-          id="cancellation-reason"
-          value={reason}
-          rows={4}
-          maxLength={500}
-          disabled={isSubmitting}
-          placeholder="Enter the reason for cancellation"
-          onChange={(event) => onReasonChange(event.target.value)}
-        />
-
-        <p>
-          {reason.length}/500
-        </p>
-
-        {error && (
-          <p role="alert" className="error-message">
-            {error}
-          </p>
-        )}
-
-        <div className="modal-actions">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isSubmitting}
-          >
-            Keep appointment
-          </button>
-
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={isConfirmDisabled}
-          >
-            {isSubmitting
-              ? "Cancelling..."
-              : "Confirm cancellation"}
+        <p className="text-sm text-muted-ink">{reason.length}/{cancellationReasonMaxLength}</p>
+        {error && <p role="alert" className="text-red-300">{error}</p>}
+        <div className="flex flex-wrap justify-end gap-4">
+          <button type="button" disabled={isSubmitting} onClick={onClose}>{appointmentCopy.keepAppointment}</button>
+          <button type="submit" disabled={!reason.trim() || isSubmitting}>
+            {isSubmitting ? appointmentCopy.cancelling : appointmentCopy.confirmCancellation}
           </button>
         </div>
-      </section>
-    </div>
+      </form>
+    </Modal>
   );
-};
-
-export default CancellationModal;
+}

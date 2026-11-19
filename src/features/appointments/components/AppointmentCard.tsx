@@ -1,73 +1,40 @@
+import { useState } from "react";
 import type { Appointment } from "@/shared/types";
-import { useNavigate } from "react-router-dom";
+import Modal from "@/shared/components/Modal";
+import { formatAppointmentDateTime, formatAppointmentTime } from "../appointmentTiming";
+import AppointmentDetailsView from "./AppointmentDetailsView";
+import JoinVideo from "./JoinVideo";
+import { appointmentCopy } from "@/features/appointments/constants";
 
-interface AppointmentCardProps{
+interface AppointmentCardProps {
   appointment: Appointment;
-  cancel: () => void,
-  isCancelling: boolean
-
+  cancel: () => void;
+  isCancelling: boolean;
 }
 
-const AppointmentCard = ({appointment, cancel, isCancelling}: AppointmentCardProps) => {
-
-  const navigate = useNavigate();
-
-  const handleJoinVideo = () => {        
-    navigate(`/video-call?appointmentId=${encodeURIComponent(appointment._id)}`);
-  }
-  const isVideoEnabled = (appointment: Appointment) => {
-
-    if(appointment.status !== 'BOOKED' || appointment.consultationType !== 'VIDEO') return false;
-
-    const currentTime = new Date().getTime();
-    const startTime = new Date(appointment.startTime).getTime();
-    const diff = startTime - currentTime
-    if(diff > 0 && diff <= 30 * 60 * 1000 ){
-      return true;
-    }
-  };
+export default function AppointmentCard({ appointment, cancel, isCancelling }: AppointmentCardProps) {
+  const [showDetails, setShowDetails] = useState(false);
 
   return (
-    <article>
-
-
-      <header>
-        <h3>{appointment?.doctorId.userId?.name}</h3>
-        <span>{appointment?.status}</span>
+    <article className="space-y-3 rounded-xl border border-line bg-panel p-4 wrap-anywhere">
+      <header className="flex flex-wrap justify-between gap-2">
+        <h3 className="font-semibold">{appointment.doctorId.userId.name}</h3>
+        <span>{appointment.status}</span>
       </header>
-
-      <p>{appointment?.doctorId?.speciality}</p>
-        
-      <time dateTime={appointment.startTime}>
-        {new Date(appointment.startTime).toLocaleTimeString()}
-      </time> 
-      <span>
-        {" - "}
-        {new Date(appointment.endTime).toLocaleTimeString() } 
-      </span>
-          
-      <div>
-          {  isVideoEnabled(appointment) && (
-            <button 
-              type="button" 
-              onClick={handleJoinVideo}>
-                Join video
-            </button>
-
-          )}
-
-          { appointment.status === 'BOOKED' &&(
-            <button 
-              type="button"
-              disabled={isCancelling}
-              onClick={cancel}>
-                { isCancelling ? 'Cancelling...' : 'Cancel' }
-            </button> 
-          )}
+      <p>{appointment.doctorId.speciality}</p>
+      <p><time dateTime={appointment.startTime}>{formatAppointmentDateTime(appointment.startTime)}</time>
+        {" – "}<time dateTime={appointment.endTime}>{formatAppointmentTime(appointment.endTime)}</time></p>
+      <div className="flex flex-wrap items-center gap-4">
+        <button type="button" onClick={() => setShowDetails(true)}>{appointmentCopy.viewDetails}</button>
+        <JoinVideo appointment={appointment} />
+        {appointment.status === "BOOKED" && <button type="button" disabled={isCancelling} onClick={cancel}>
+          {isCancelling ? appointmentCopy.cancelling : appointmentCopy.cancel}
+        </button>}
       </div>
-
+      {showDetails && <Modal title={appointmentCopy.title} onClose={() => setShowDetails(false)}>
+        <AppointmentDetailsView appointmentId={appointment._id} role="PATIENT" />
+        <button className="mt-5" onClick={() => setShowDetails(false)}>{appointmentCopy.close}</button>
+      </Modal>}
     </article>
-  )
+  );
 }
-
-export default AppointmentCard

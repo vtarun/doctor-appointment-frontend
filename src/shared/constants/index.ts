@@ -6,6 +6,8 @@ interface NavbarLink {
   label: string;
 }
 
+export const yearsOfExperience = (years: number) => `${years} years of experience`;
+
 export const NavbarRoleBasedLinks: Record<UserRoleType, NavbarLink[]> = {
   PATIENT: [
     { to: ROUTES.patient.root, label: "Dashboard" },
@@ -17,7 +19,7 @@ export const NavbarRoleBasedLinks: Record<UserRoleType, NavbarLink[]> = {
     { to: ROUTES.doctor.root, label: "Dashboard" },
   ],
   ADMIN: [
-    { to: ROUTES.admin.root, label: "Dashboard" },
+
     { to: ROUTES.admin.doctors, label: "Doctor Requests" },
   ],
 };

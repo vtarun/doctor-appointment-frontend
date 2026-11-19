@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 
 import NextAppointment from "@/features/appointments/components/NextAppointment";
@@ -9,7 +9,7 @@ import { appointmentApi } from "@/features/appointments/api/appointment.api";
 import { invalidateAppointmentQueries } from "@/features/appointments/api/invalidateAppointmentQueries";
 import type { Appointment } from "@/shared/types";
 import { useAuthStore } from "@/shared/store/authStore";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAppointments } from "@/features/appointments/hooks/useAppointments";
 import WalletBalanceCard from "@/features/credit/components/WalletBalanceCard";
 
@@ -18,6 +18,15 @@ import CancellationModal from "@/features/appointments/components/CancellationMo
 type StatusFilter = Appointment['status'] | 'ALL';
 
 const PatientDashboard = () => {    
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (hash === "#dashboard-appointments") {
+      const section = document.getElementById("dashboard-appointments");
+      section?.focus({ preventScroll: true });
+      section?.scrollIntoView();
+    }
+  }, [hash]);
+
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const [cancelError, setCancelError] = useState<string>('');
   const [appointmentToCancel, setAppointmentToCancel] = useState<string | null>(null);

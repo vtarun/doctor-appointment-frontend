@@ -1,4 +1,4 @@
-﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -11,6 +11,7 @@ import {
 import { ApplicationStatus, reviewButton, reviewFocus, ReviewError } from "../components/ApplicationReview";
 import CredentialDocument from "../components/CredentialDocument";
 import { formatApplicationDate } from "../formatApplicationDate";
+import { adminCopy } from "@/features/admin/constants";
 
 interface Props {
   loadApplication?: (doctorId: string) => Promise<DoctorApplication | null>;
@@ -39,6 +40,7 @@ function ApplicationReview({ doctorId, loadApplication, loadCredential }: Props 
   const refreshApplications = () => Promise.all([
     client.invalidateQueries({ queryKey: detailKey }),
     client.invalidateQueries({ queryKey: queryKeys.adminPendingDoctors }),
+    client.invalidateQueries({ queryKey: ["admin", "doctors", "verified"] }),
   ]);
   const approval = useMutation({
     mutationFn: () => approveDoctor(doctorId),
@@ -77,37 +79,37 @@ function ApplicationReview({ doctorId, loadApplication, loadCredential }: Props 
 
   return (
     <section className="mx-auto max-w-4xl space-y-6 px-4 py-8 sm:px-8">
-      <Link className={`text-emerald-300 underline ${reviewFocus}`} to={ROUTES.admin.doctors}>Back to requests</Link>
-      <h1 ref={heading} tabIndex={-1} className="text-2xl font-semibold wrap-anywhere">{data?.name ?? "Doctor application"}</h1>
-      {approved && <p role="status" className="text-emerald-300">Doctor approved successfully</p>}
+      <Link className={`text-emerald-300 underline ${reviewFocus}`} to={ROUTES.admin.doctors}>{adminCopy.backToRequests}</Link>
+      <h1 ref={heading} tabIndex={-1} className="text-2xl font-semibold wrap-anywhere">{data?.name ?? adminCopy.applicationTitle}</h1>
+      {approved && <p role="status" className="text-emerald-300">{adminCopy.doctorApproved}</p>}
       {notFound ? (
-        <p role="status">Doctor application not found.</p>
+        <p role="status">{adminCopy.applicationNotFound}</p>
       ) : !loadApplication ? (
-        <p role="status" className="text-muted-ink">Doctor application details are currently unavailable.</p>
+        <p role="status" className="text-muted-ink">{adminCopy.applicationUnavailable}</p>
       ) : application.isPending ? (
-        <p role="status">Loading application…</p>
+        <p role="status">{adminCopy.loadingApplication}</p>
       ) : application.isError && !data ? (
         <ReviewError retry={() => void application.refetch()}>
-          {getAdminDoctorErrorMessage(application.error, "Could not load this application.")}
+          {getAdminDoctorErrorMessage(application.error, adminCopy.applicationLoadError)}
         </ReviewError>
       ) : data && (
         <>
           <div className="flex flex-wrap items-center gap-3">
             <ApplicationStatus status={approved ? "VERIFIED" : data.verificationStatus} />
-            {data.submittedAt && <p className="text-muted-ink">Submitted {formatApplicationDate(data.submittedAt)}</p>}
+            {data.submittedAt && <p className="text-muted-ink">{adminCopy.submittedOn(formatApplicationDate(data.submittedAt))}</p>}
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Details title="Personal details" fields={[
-              ["Name", data.name], ["Date of birth", data.dateOfBirth && formatApplicationDate(data.dateOfBirth)], ["Gender", data.gender],
+            <Details title={adminCopy.personalDetails} fields={[
+              [adminCopy.name, data.name], [adminCopy.dateOfBirth, data.dateOfBirth && formatApplicationDate(data.dateOfBirth)], [adminCopy.gender, data.gender],
             ]} />
-            <Details title="Professional details" fields={[
-              ["Specialty", data.specialty], ["Qualification", data.qualification], ["Years of experience", data.experienceYears], ["Bio", data.bio],
+            <Details title={adminCopy.professionalDetails} fields={[
+              [adminCopy.specialty, data.specialty], [adminCopy.qualification, data.qualification], [adminCopy.experienceYears, data.experienceYears], [adminCopy.bio, data.bio],
             ]} />
-            <Details title="Practice details" fields={[
-              ["Clinic", data.clinicName], ["City", data.city], ["Consultation type", data.consultationType], ["Consultation fee", data.consultationFee],
+            <Details title={adminCopy.practiceDetails} fields={[
+              [adminCopy.clinic, data.clinicName], [adminCopy.city, data.city], [adminCopy.consultationType, data.consultationType], [adminCopy.consultationFee, data.consultationFee],
             ]} />
             <section className="space-y-3 rounded-xl border border-line bg-panel p-5 wrap-anywhere">
-              <h2 className="text-lg font-semibold">Credentials</h2>
+              <h2 className="text-lg font-semibold">{adminCopy.credentials}</h2>
               {data.credentials?.length ? (
                 <ul className="space-y-3">
                   {data.credentials.map((credential: DoctorCredential) => (
@@ -118,14 +120,14 @@ function ApplicationReview({ doctorId, loadApplication, loadCredential }: Props 
                     />
                   ))}
                 </ul>
-              ) : <p className="text-muted-ink">No credential documents available.</p>}
+              ) : <p className="text-muted-ink">{adminCopy.noCredentials}</p>}
             </section>
           </div>
           {canApprove && (
             <button ref={approveButton} className={reviewButton} onClick={() => {
               approval.reset();
               dialog.current?.showModal();
-            }}>Approve doctor</button>
+            }}>{adminCopy.approveDoctor}</button>
           )}
         </>
       )}
@@ -140,18 +142,18 @@ function ApplicationReview({ doctorId, loadApplication, loadCredential }: Props 
         }}
       >
         <div className="space-y-4 wrap-anywhere">
-          <h2 id="approve-doctor-title" className="text-lg font-semibold">Approve {data?.name ?? "doctor"}?</h2>
-          <p id="approve-doctor-description">Approval enables verified-doctor access.</p>
+          <h2 id="approve-doctor-title" className="text-lg font-semibold">{adminCopy.approveDoctorPrompt(data?.name)}</h2>
+          <p id="approve-doctor-description">{adminCopy.approvalDescription}</p>
           {approval.isError && (
             <p role="alert" className="text-red-300">
-              {alreadyProcessed ? "This application has already been processed." :
-                getAdminDoctorErrorMessage(approval.error, "Could not approve this doctor. Please try again.")}
+              {alreadyProcessed ? adminCopy.alreadyProcessed :
+                getAdminDoctorErrorMessage(approval.error, adminCopy.doctorApprovalError)}
             </p>
           )}
           <div className="flex flex-wrap justify-end gap-3">
-            <button autoFocus className={`px-3 py-2 ${reviewFocus}`} onClick={closeDialog} disabled={approval.isPending}>Cancel</button>
+            <button autoFocus className={`px-3 py-2 ${reviewFocus}`} onClick={closeDialog} disabled={approval.isPending}>{adminCopy.cancel}</button>
             <button className={reviewButton} disabled={approval.isPending || !canApprove} onClick={() => approval.mutate()}>
-              {approval.isPending ? "Approving…" : "Confirm approval"}
+              {approval.isPending ? adminCopy.approving : adminCopy.confirmApproval}
             </button>
           </div>
         </div>
@@ -174,7 +176,7 @@ function Details({ title, fields }: { title: string; fields: [string, string | n
             </div>
           ))}
         </dl>
-      ) : <p className="text-muted-ink">No details provided.</p>}
+      ) : <p className="text-muted-ink">{adminCopy.noDetails}</p>}
     </section>
   );
 }

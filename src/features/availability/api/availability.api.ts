@@ -1,8 +1,10 @@
 import { axiosInstance } from "@/shared/api/axiosInstance"
 
+import type { AvailabilityResponse } from "../types";
+
 export const availabilityApi = {
     getSlots: async (doctorId: string, from: string, to: string) => {
-        const response = await axiosInstance.get(`/availability/${doctorId}?from=${from}&to=${to}`);
+        const response = await axiosInstance.get<AvailabilityResponse>(`/availability/${encodeURIComponent(doctorId)}`, { params: { from, to } });
         return response.data;
     },
     createWindow: async (window: object) => {

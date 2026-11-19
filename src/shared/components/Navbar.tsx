@@ -78,7 +78,7 @@ export default function Navbar({ role, name = "Account", photo }: NavbarProps) {
         <ul className="order-last flex w-full flex-wrap items-center gap-x-4 gap-y-1 text-sm sm:order-0 sm:w-auto sm:flex-1">
           {NavbarRoleBasedLinks[role].map(({ to, label }) => (
             <li key={to}>
-              <NavLink to={to} end={to === NavbarRoleBasedLinks[role][0]?.to}
+              <NavLink to={to} end={role !== "ADMIN" && to === NavbarRoleBasedLinks[role][0]?.to}
                 className={({ isActive }) => `inline-block rounded-sm py-1 ${focusStyle} ${isActive ? "text-emerald-300 underline underline-offset-4" : "text-muted-ink hover:text-ink"}`}>
                 {label}
               </NavLink>

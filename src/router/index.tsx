@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import React, { lazy, Suspense } from "react";
 
 import NotFound from "@/pages/NotFound";
@@ -11,18 +11,22 @@ import ProtectedRoute from "@/shared/components/ProtectedRoute";
 import Unauthorized from "@/pages/Unauthorized";
 
 import DoctorsList from "@/features/patient/pages/DoctorsList";
-import DoctorDetails from "@/features/patient/pages/DoctorDetails";
-import PendingDoctors from "@/features/admin/pages/PendingDoctors";
+
+import { adminManagement } from "@/features/admin/api/adminManagement.api";
+
 import AdminDoctorDetails from "@/features/admin/pages/AdminDoctorDetails";
 import FindDoctors from "@/features/patient/pages/FindDoctors";
 import PatientWallet from "@/features/patient/pages/PatientWallet";
 import DoctorAvailability from "@/features/doctor/pages/DoctorAvailability";
 import DoctorWallet from "@/features/doctor/pages/DoctorWallet";
-import DoctorAppointmentDetails from "@/features/doctor/pages/DoctorAppointmentDetails";
+
 import DoctorProfile from "@/features/doctor/pages/DoctorProfile";
 import AccountPage from "@/features/account/AccountPage";
 import { ROUTES } from "./routes";
 
+const VideoConsultation = lazy(() => import("@/features/video/pages/VideoConsultation"));
+const DoctorDetails = lazy(() => import("@/features/patient/pages/DoctorDetails"));
+const DoctorAppointmentDetails = lazy(() => import("@/features/doctor/pages/DoctorAppointmentDetails"));
 const AdminDashboard = lazy(() => import('@/features/admin/pages/AdminDashboard'));
 const DoctorDashboard = lazy(() => import('@/features/doctor/pages/DoctorDashboard'));
 const PatientDashboard = lazy(() => import('@/features/patient/pages/PatientDashboard'));
@@ -42,6 +46,10 @@ const router = createBrowserRouter([
       { path: "/register", element: <Register /> },
       { path: "/unauthorized", element: <Unauthorized /> },
       {
+        element: <ProtectedRoute allowedRoles={["PATIENT", "DOCTOR"]} />,
+        children: [{ path: ROUTES.videoCall, element: withSuspense(<VideoConsultation />) }],
+      },
+      {
         element: <ProtectedRoute allowedRoles={["PATIENT", "DOCTOR", "ADMIN"]} />,
         children: [{ path: ROUTES.account, element: <AccountPage /> }],
       },
@@ -54,9 +62,11 @@ const router = createBrowserRouter([
       {
         element: <ProtectedRoute allowedRoles={["ADMIN"]} />, 
         children:[
-          { path: "admin", element: withSuspense(<AdminDashboard />) },
-          { path: "admin/doctors", element: withSuspense(<PendingDoctors />) },
-          { path: "admin/doctors/:doctorId", element: withSuspense(<AdminDoctorDetails />) }                 
+          { path: ROUTES.admin.root, element: <Navigate to={ROUTES.admin.doctors} replace /> },
+          { path: ROUTES.admin.doctors, element: withSuspense(<AdminDashboard />) },
+          { path: ROUTES.admin.verified, element: withSuspense(<AdminDashboard />) },
+          { path: ROUTES.admin.payouts, element: withSuspense(<AdminDashboard />) },
+          { path: ROUTES.admin.doctorDetails, element: <AdminDoctorDetails loadApplication={adminManagement.application} loadCredential={adminManagement.credential} /> },
         ]
       },
       {
@@ -76,7 +86,7 @@ const router = createBrowserRouter([
           { path: "/doctor", element: withSuspense(<DoctorDashboard />) },
           { path: "/doctor/availability", element: withSuspense(<DoctorAvailability />) },
           { path: "/doctor/wallet", element: withSuspense(<DoctorWallet />) },
-          { path: "/doctor/appointments/:appointmentId", element: withSuspense(<DoctorAppointmentDetails />) },
+          { path: ROUTES.doctor.appointmentDetails, element: withSuspense(<DoctorAppointmentDetails />) },
           { path: "/doctor/profile", element: withSuspense(<DoctorProfile />) }
         ]
       }        

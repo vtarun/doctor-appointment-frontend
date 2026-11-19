@@ -2,15 +2,16 @@
 import { useMutation } from "@tanstack/react-query";
 import { getAdminDoctorErrorMessage, type DoctorCredential } from "../api/doctorApproval.api";
 import { reviewFocus } from "./ApplicationReview";
+import { adminCopy } from "@/features/admin/constants";
 
 export default function CredentialDocument({ credential, load }: { credential: DoctorCredential; load?: () => Promise<Blob> }) {
   const [url, setUrl] = useState<string>();
   const document = useMutation({
     mutationFn: async () => {
-      if (!load) throw new Error("Credential access unavailable");
+      if (!load) throw new Error(adminCopy.credentialAccessUnavailable);
       const file = await load();
       if (!["application/pdf", "image/jpeg"].includes(file.type)) {
-        throw new Error("Unsupported credential type");
+        throw new Error(adminCopy.unsupportedCredentialType);
       }
       return file;
     },
@@ -22,11 +23,9 @@ export default function CredentialDocument({ credential, load }: { credential: D
 
   return (
     <li className="space-y-1">
-      <p>{credential.name ?? "Credential document"}</p>
-      {!load ? <p className="text-muted-ink">Secure document access is currently unavailable.</p> : url ? (
-        <a href={url} target="_blank" rel="noopener noreferrer" className={`text-emerald-300 underline ${reviewFocus}`}>
-          Open credential (new tab)
-        </a>
+      <p>{credential.name ?? adminCopy.credentialDocument}</p>
+      {!load ? <p className="text-muted-ink">{adminCopy.credentialAccessMessage}</p> : url ? (
+        <a href={url} target="_blank" rel="noopener noreferrer" className={`text-emerald-300 underline ${reviewFocus}`}>{adminCopy.openCredential}{" "}</a>
       ) : (
         <button
           className={`text-emerald-300 underline disabled:opacity-60 ${reviewFocus}`}
@@ -35,13 +34,13 @@ export default function CredentialDocument({ credential, load }: { credential: D
             onSuccess: (file) => setUrl(URL.createObjectURL(file)),
           })}
         >
-          {document.isPending ? "Loading credential…" : "View credential"}
+          {document.isPending ? adminCopy.loadingCredential : adminCopy.viewCredential}
         </button>
       )}
       {document.isError && (
-        <p role="alert" className="text-red-300">{getAdminDoctorErrorMessage(document.error, "Could not open this credential.", {
-          404: "This credential is unavailable.",
-          410: "Access to this credential has expired.",
+        <p role="alert" className="text-red-300">{getAdminDoctorErrorMessage(document.error, adminCopy.credentialLoadError, {
+          404: adminCopy.credentialUnavailable,
+          410: adminCopy.credentialExpired,
         })}</p>
       )}
     </li>
