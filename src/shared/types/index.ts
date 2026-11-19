@@ -2,6 +2,7 @@ export type UserRoleType = 'PATIENT'| 'DOCTOR'| 'ADMIN';
 export interface User{
     id: string,
     name: string,
+    avatarUrl?: string | null,
     email: string,
     dateOfBirth: string,
     gender: string,

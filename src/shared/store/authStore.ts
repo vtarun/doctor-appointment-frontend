@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { User } from '../types';
+import queryClient from '../lib/queryClient';
 interface AuthStore{
     isLoading: boolean,
     user:  User | null,
@@ -47,6 +48,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
             isAuthenticated: false, 
             isLoading: false
         });
+        queryClient.clear();
     },
     setUser: (user: User) => {
         localStorage.setItem("user", JSON.stringify(user));

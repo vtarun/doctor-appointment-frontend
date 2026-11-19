@@ -20,6 +20,8 @@ import DoctorAvailability from "@/features/doctor/pages/DoctorAvailability";
 import DoctorWallet from "@/features/doctor/pages/DoctorWallet";
 import DoctorAppointmentDetails from "@/features/doctor/pages/DoctorAppointmentDetails";
 import DoctorProfile from "@/features/doctor/pages/DoctorProfile";
+import AccountPage from "@/features/account/AccountPage";
+import { ROUTES } from "./routes";
 
 const AdminDashboard = lazy(() => import('@/features/admin/pages/AdminDashboard'));
 const DoctorDashboard = lazy(() => import('@/features/doctor/pages/DoctorDashboard'));
@@ -39,6 +41,10 @@ const router = createBrowserRouter([
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
       { path: "/unauthorized", element: <Unauthorized /> },
+      {
+        element: <ProtectedRoute allowedRoles={["PATIENT", "DOCTOR", "ADMIN"]} />,
+        children: [{ path: ROUTES.account, element: <AccountPage /> }],
+      },
       { 
         element: <ProtectedRoute onboardingOnly />, 
         children:[                    
