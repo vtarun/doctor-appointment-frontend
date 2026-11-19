@@ -11,12 +11,15 @@ node_modules
 dist
 dist-ssr
 src/*/*/mock-data
+src/*/*/*.test.tsx
 src/mock-data
 src/tests
-src/test
+src/test/*
+src/test/setup.ts
 *.local
 tasks.md
-tests
+tests/*
+*.md
 
 # Editor directories and files
 .vscode/*
