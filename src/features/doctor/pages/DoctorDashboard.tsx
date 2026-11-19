@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import { formStyles as ui } from "@/shared/styles/formStyles";
 
 import { doctorApi } from "../api/doctor.api";
+import { useAuthStore } from "@/shared/store/authStore";
 
 type StatusFilter = AppointmentStatus | 'ALL';
 
@@ -38,10 +39,12 @@ const DoctorDashboard = () => {
   const [appointmentToCancel, setAppointmentToCancel] = useState<string | null>(null);
   const [cancellationReason, setCancellationReason] = useState("");
 
-  const {data: doctor, isLoading: isLoadingDoctor, isError: isDoctorError } = useQuery({
-    queryKey: ['doctors', 'me'],
+  const userId = useAuthStore((state) => state.user?.id);
+  const { data: doctor, isFetching: isFetchingDoctor, isRefetchError, refetch: refreshDoctor } = useQuery({
+    queryKey: ['doctors', 'me', userId],
     queryFn: () => doctorApi.getMyProfile(),
-    staleTime: 30 * 60 * 1000  // 30 minutes
+    gcTime: 0,
+    refetchOnMount: "always",
   });
 
 
@@ -131,20 +134,33 @@ const { mutate: cancelMutate, isPending: isCancelPending } = useMutation({
 
   const isNoFilteredAppointments = filteredAppointments?.length === 0;
 
-  if(isLoadingDoctor){
+  if (!doctor && isFetchingDoctor) {
     return <p>Loading doctor details</p>
   }
 
-  if(isDoctorError || !doctor){
-    return <p role='alert'>Unable to load doctor details. Please try again.</p>
+  if (!doctor) {
+    return (
+      <div>
+        <p role="alert">Unable to load doctor details. Please try again.</p>
+        <button type="button" className={ui.secondaryButton} onClick={() => void refreshDoctor()}>
+          Refresh verification status
+        </button>
+      </div>
+    );
   }
 
   if (doctor.verificationStatus === "PENDING") {
-    return <DoctorPendingStatus />
+    return (
+      <DoctorPendingStatus
+        onRefresh={() => void refreshDoctor()}
+        isRefreshing={isFetchingDoctor}
+        refreshFailed={isRefetchError}
+      />
+    );
   }
 
   if (doctor.verificationStatus === "REJECTED") {
-    return <DoctorRejectedStatus reason= "" />//{doctor?.rejectionReason}/>
+    return <DoctorRejectedStatus reason= {doctor?.rejectionReason} />
   }
 
   if (isAppointmentLoading) {
@@ -338,37 +354,3 @@ const { mutate: cancelMutate, isPending: isCancelPending } = useMutation({
 }
 
 export default DoctorDashboard
-
-
-
-
-// doctor flow 
-/*  -Dashboard
-      Sections:
-      - Profile summary with edit button(route to profile page)
-        useQuery - doctor ,me
-      - Show wallet summary
-        useQuery, wallet
-      - Current day appointments list
-        useAppointment
-        - Show button to complete or cancel appointment
-        useMutation, appointments, cancel, complete
-        - Show modal while canceling appointment.
-          useMutation, cancel appointment
-      - Show calender to select for any particular date appointments
-          useMutation, appointments for paticular date
-      - Show different status of appointms button to filter appointments
-      - Show availability button to route doctor to schedule availability
-        useQuery, availability for present day, date auto selected in calender
-        select time/date to create new availability, upon success show for that date all avilable slots
-        Cancel availability(reject if appointment already booked by patient with error message)
-    -Wallet
-      - Show date wise all transations
-    -Appointments
-      - Show date wise all appointments, past present and future
-      - Add feature of repeat appointments remarks and list for particular patient
-      
-      
-
-
-*/

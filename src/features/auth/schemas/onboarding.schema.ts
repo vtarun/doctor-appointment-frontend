@@ -1,7 +1,8 @@
 import { z } from 'zod'
+import { specialties } from '@/features/patient/constants/specialities'
 
 export const personalInfoSchema = z.object({
-    fullname: z.string()
+    fullname: z.string().trim()
         .min(3, "Full name must be at least 3 characters")
         .max(15, "Full name must be at most 15 characters"),
     dateOfBirth: z.iso.date({
@@ -16,8 +17,9 @@ export type PersonalInfoFormData = z.infer<typeof personalInfoSchema>;
 
 
 export const credentialSchema = z.object({
-    speciality: z.string()
-        .min(1, "Enter your speciality"),
+    speciality: z.enum(specialties.map(({ slug }) => slug), {
+        error: "Select a supported specialty"
+    }),
     totalExperience: z.coerce.number()
         .int("Experience must be a whole number of years")
         .min(0, "Experience cannot be negative"),
@@ -33,13 +35,15 @@ export type CredentialFormData = z.infer<typeof credentialSchema>;
 
 
 export const practiceDetailsSchema = z.object({
-    clinicName: z.string()
+    clinicName: z.string().trim()
         .min(3, "Clinic name must be at least 3 characters")
         .max(15, "Clinic name must be at most 15 characters"),
-    city: z.string()
+    city: z.string().trim()
         .min(3, "City must be at least 3 characters")
         .max(15, "City must be at most 15 characters"),
-    bio: z.string().min(10, "Bio must be at least 10 characters"),
+    bio: z.string().trim()
+        .min(10, "Bio must be at least 10 characters")
+        .max(1000, "Bio must be at most 1,000 characters"),
     consultationType: z.enum(['ONLINE', 'IN_PERSON', 'BOTH'], {
         error: "Select a consultation type"
     }),

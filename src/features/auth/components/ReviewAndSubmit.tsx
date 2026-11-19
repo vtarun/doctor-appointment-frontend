@@ -1,5 +1,6 @@
 import { useFormContext, useWatch } from "react-hook-form";
 import type { OnboardingFormData } from "../schemas/onboarding.schema";
+import { specialties } from "@/features/patient/constants/specialities";
 
 interface ReviewAndSubmitProps {
   onEditSteps: (step: number) => void;
@@ -37,7 +38,7 @@ const ReviewAndSubmit = ({onEditSteps}: ReviewAndSubmitProps) => {
 
     <section>
       <h3>Credentials</h3>
-      <p>Speciality : <b>{speciality}</b></p>
+      <p>Speciality : <b>{specialties.find(({ slug }) => slug === speciality)?.name}</b></p>
       <p>Total experience : <b>{totalExperience}</b></p>
       <p>Qualification : <b>{qualification}</b></p>
       <p>File: {credential?.name ?? 'No file uploaded'}</p>
